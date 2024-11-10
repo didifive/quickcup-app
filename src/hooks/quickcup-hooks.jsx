@@ -4,7 +4,7 @@ import { QuickCupContext } from "../providers/quickcup-provider";
 const useQuickCup = () => {
   const {
     quickcupState,
-    getEmpresa,
+    getQuickCupBasico,
     enviarCliente,
     obterEnderecosCliente,
     adicionarEndereco,
@@ -12,10 +12,10 @@ const useQuickCup = () => {
     removerEndereco,
   } = useContext(QuickCupContext);
 
-  return { 
-    quickcupState, 
-    getEmpresa, 
-    enviarCliente, 
+  return {
+    quickcupState,
+    getQuickCupBasico,
+    enviarCliente,
     obterEnderecosCliente,
     adicionarEndereco,
     atualizarEndereco,

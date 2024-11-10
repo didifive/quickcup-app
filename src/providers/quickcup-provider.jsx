@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useState } from "react";
 import apiQuickCup from "../services/quickcup-api";
+import { minutosEmMilisegundos, cacheEmMinutos } from "../utils/constants";
 
 export const QuickCupContext = createContext({
   loading: false,
@@ -9,7 +10,7 @@ export const QuickCupContext = createContext({
   grupos: [],
   produtos: [],
   pedidos: [],
-  ultimoGetEmpresa: null,
+  ultimoGetBasico: null,
 });
 
 
@@ -26,55 +27,104 @@ const QuickCupProvider = ({ children }) => {
             produtos: [],
             pedidos: [],
             ultimoGetEmpresa: null,
+            ultimoGetGrupo: null,
+            ultimoGetProduto: null,
           }
     );
 
-    const getEmpresa = async () => {
-      const minutosEmMilisegundos = 60000;
-      const minimoEsperaEmMinutos = 1;
-      const empresaPreenchida = Object.keys(quickcupState.empresa).length > 0;
+    const getQuickCupBasico = async () => {
       const agora = new Date();
-      const ultimoGetEmpresa = quickcupState.ultimoGetEmpresa;
-
-      if (
-        empresaPreenchida &&
-        ultimoGetEmpresa &&
-        (agora - ultimoGetEmpresa) / minutosEmMilisegundos <
-          minimoEsperaEmMinutos
-      ) {
-        return;
-      }
+      const basicoPreenchido = 
+          Object.keys(quickcupState.empresa).length > 0 
+          && quickcupState.produtos.length > 0
+          && quickcupState.grupos.length > 0;
+      const ultimoGetBasico = quickcupState.ultimoGetBasico; 
       
+      if (
+         basicoPreenchido &&
+         ultimoGetBasico &&
+         (agora - ultimoGetBasico) / minutosEmMilisegundos < cacheEmMinutos
+       ) {
+         return;
+       }
+
       setQuickcupState((prevState) => ({
         ...prevState,
         loading: true,
       }));
 
+      obterEmpresa();
+      obterGrupos();
+      obterProdutosAtivos();
+
+      setQuickcupState((prevState) => ({
+        ...prevState,
+        loading: false,
+        ultimoGetBasico: agora,
+      }));
+
+      if (!basicoPreenchido){
+        setQuickcupState((prevState) => ({
+          ...prevState,
+          ultimoGetBasico: null,
+        }));
+      }
+
+      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
+    }
+
+    const obterEmpresa = async () => {
       try {
         const { data:empresa } = await apiQuickCup.get("/empresa");
 
         if (!empresa) {
           throw new Error("Erro no sistema, empresa não encontrada");
         }
-
         setQuickcupState((prevState) => ({
           ...prevState,
-          loading: false,
           empresa: empresa,
-          ultimoGetEmpresa: agora,
         }));
-        
       } catch (error) {
         console.error(error);
         setQuickcupState((prevState) => ({
           ...prevState,
-          loading: false,
           empresa: {},
-          ultimoGetEmpresa: null,
         }));
       }
+    };
 
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
+    const obterGrupos = async () => {
+      try {
+        const { data: grupos } = await apiQuickCup.get("/grupo");
+        setQuickcupState((prevState) => ({
+          ...prevState,
+          grupos: grupos
+        }));
+      } catch (error) {
+        console.error(error);
+        setQuickcupState((prevState) => ({
+          ...prevState,
+          grupos: []
+        }));
+      }
+    };
+
+    const obterProdutosAtivos = async () => {
+      try {
+        const { data: produtos } = await apiQuickCup.get(
+          "/produto/ativo"
+        );
+        setQuickcupState((prevState) => ({
+          ...prevState,
+          produtos: produtos
+        }));
+      } catch (error) {
+        console.error(error);
+        setQuickcupState((prevState) => ({
+          ...prevState,
+          produtos: []
+        }));
+      }
     };
 
     const enviarCliente = async (cliente) => {
@@ -142,6 +192,8 @@ const QuickCupProvider = ({ children }) => {
           enderecos: [],
         }));
       }
+
+      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const adicionarEndereco = async (endereco) => {
@@ -169,6 +221,8 @@ const QuickCupProvider = ({ children }) => {
           loading: false,
         }));
       }
+
+      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const atualizarEndereco = async (enderecoId, endereco) => {
@@ -204,6 +258,8 @@ const QuickCupProvider = ({ children }) => {
           loading: false,
         }));
       }
+
+      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const removerEndereco = async (enderecoId) => {
@@ -233,37 +289,40 @@ const QuickCupProvider = ({ children }) => {
           loading: false,
         }));
       }
+
+      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
 
 
-  const contextValue = {
-    quickcupState,
-    getEmpresa: () => getEmpresa(),
-    enviarCliente: useCallback((cliente) => enviarCliente(cliente), []),
-    obterEnderecosCliente: useCallback(
-      (clienteId) => obterEnderecosCliente(clienteId),
-      []
-    ),
-    adicionarEndereco: useCallback(
-      (endereco) => adicionarEndereco(endereco),
-      []
-    ),
-    atualizarEndereco: useCallback(
-      (enderecoId, endereco) => atualizarEndereco(enderecoId, endereco),
-      []
-    ),
-    removerEndereco: useCallback(
-      (enderecoId) => removerEndereco(enderecoId),
-      []
-    ),
-  };
 
-  return (
-    <QuickCupContext.Provider value={contextValue}>
-      {children}
-    </QuickCupContext.Provider>
-  );
+    const contextValue = {
+      quickcupState,
+      getQuickCupBasico: () => getQuickCupBasico(),
+      enviarCliente: useCallback((cliente) => enviarCliente(cliente), []),
+      obterEnderecosCliente: useCallback(
+        (clienteId) => obterEnderecosCliente(clienteId),
+        []
+      ),
+      adicionarEndereco: useCallback(
+        (endereco) => adicionarEndereco(endereco),
+        []
+      ),
+      atualizarEndereco: useCallback(
+        (enderecoId, endereco) => atualizarEndereco(enderecoId, endereco),
+        []
+      ),
+      removerEndereco: useCallback(
+        (enderecoId) => removerEndereco(enderecoId),
+        []
+      ),
+    };
+
+    return (
+      <QuickCupContext.Provider value={contextValue}>
+        {children}
+      </QuickCupContext.Provider>
+    );
 };
 
 export default QuickCupProvider;

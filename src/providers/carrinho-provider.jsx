@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useState } from "react";
-import apiQuickCup from "../services/quickcup-api";
 
 export const CarrinhoContext = createContext();
 
