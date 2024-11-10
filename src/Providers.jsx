@@ -1,11 +1,14 @@
 import React from "react";
-import Home from "./Home";
+import App from "./App";
 import QuickCupProvider from "./providers/quickcup-provider";
+import CarrinhoProvider from "./providers/carrinho-provider";
 
 const Providers = () => {
   return (
     <QuickCupProvider>
-      <Home />
+      <CarrinhoProvider>
+        <App />
+      </CarrinhoProvider>
     </QuickCupProvider>
   );
 };

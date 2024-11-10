@@ -19,7 +19,8 @@ const useQuickCup = () => {
     obterEnderecosCliente,
     adicionarEndereco,
     atualizarEndereco,
-    removerEndereco,};
+    removerEndereco,
+  };
 };
 
 export default useQuickCup;

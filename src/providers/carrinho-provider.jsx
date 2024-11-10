@@ -5,15 +5,16 @@ export const CarrinhoContext = createContext();
 
 const CarrinhoProvider = ({ children }) => {
     const [carrinhoState, setCarrinhoState] = useState(
-      localStorage.getItem("carrinho") ? JSON.parse(localStorage.getItem("carrinho")) : 
-          {
-          clienteId: "",
-          enderecoId: "",
-          valorOriginal: 0,
-          valorDesconto: 0,
-          valorEntrega: 0,
-          itensCarrinho: [],
-        }
+      localStorage.getItem("carrinho") 
+        ? JSON.parse(localStorage.getItem("carrinho")) 
+        : {
+            clienteId: "",
+            enderecoId: "",
+            valorOriginal: 0,
+            valorDesconto: 0,
+            valorEntrega: 0,
+            itensCarrinho: [],
+          }
   );
 
     const abreCarrinho = (clienteId) => {
@@ -137,7 +138,6 @@ const CarrinhoProvider = ({ children }) => {
 
   const carrinho = {
     carrinhoState,
-    getEmpresa: () => getEmpresa(),
     abreCarrinho: useCallback((clienteId) => enviarCliente(clienteId), []),
     adicionaItem: useCallback(
       (produto, quantidade) => adicionaItem(produto, quantidade),
