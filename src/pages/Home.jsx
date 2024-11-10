@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import useQuickCup from "./hooks/quickcup-hooks";
+import useQuickCup from "../hooks/quickcup-hooks";
 import useCarrinho from "../hooks/carrinho-hooks";
-
 
 const Home = () => {
   const { quickcupState, getEmpresa, enviarCliente, obterEnderecosCliente } =
@@ -20,7 +19,6 @@ const Home = () => {
     enviarCliente(clienteTeste);
   }, []); 
 
-
   return (
     <div className="container">
       <header className="py-5">
@@ -37,11 +35,12 @@ const Home = () => {
         <p>Endereços: {JSON.stringify(quickcupState.enderecos)}</p>
         <p>Grupos: {JSON.stringify(quickcupState.grupos)}</p>
         <p>Produtos: {JSON.stringify(quickcupState.produtos)}</p>
+        <p>Pedidos: {JSON.stringify(quickcupState.pedidos)}</p>
         <p>Carrinho: {JSON.stringify(carrinhoState)}</p>
-        <p>Carrinho Lenght: {JSON.stringify(carrinhoState.itemsCarrinho.length)}</p>
+        <p>Quantidade de Itens no carrinho: {carrinhoState.itensCarrinho.length}</p>
       </main>
     </div>
   );
 };
 
-export default App;
+export default Home;

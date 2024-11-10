@@ -15,7 +15,7 @@ const CarrinhoProvider = ({ children }) => {
             valorEntrega: 0,
             itensCarrinho: [],
           }
-  );
+    );
 
     const abreCarrinho = (clienteId) => {
       if (!clienteId) {
@@ -134,8 +134,6 @@ const CarrinhoProvider = ({ children }) => {
       localStorage.setItem("carrinho", JSON.stringify(carrinhoState));
     };
 
-  };
-
   const carrinho = {
     carrinhoState,
     abreCarrinho: useCallback((clienteId) => enviarCliente(clienteId), []),
@@ -155,5 +153,7 @@ const CarrinhoProvider = ({ children }) => {
       {children}
     </CarrinhoContext.Provider>
   );
+
+};
 
 export default CarrinhoProvider;
