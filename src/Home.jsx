@@ -3,7 +3,8 @@ import useQuickCup from "./hooks/quickcup-hooks";
 
 
 const Home = () => {
-  const { quickcupState, getEmpresa, enviarCliente } = useQuickCup();
+  const { quickcupState, getEmpresa, enviarCliente, obterEnderecosCliente } =
+    useQuickCup();
 
   const clienteTeste = {
     nome: "Teste asdf sadf",
@@ -15,7 +16,6 @@ const Home = () => {
     getEmpresa();
     enviarCliente(clienteTeste);
   }, []); 
-
 
 
   return (
@@ -31,6 +31,7 @@ const Home = () => {
         {quickcupState.loading && <p>Loading...</p>}
         <p>Empresa: {JSON.stringify(quickcupState.empresa)}</p>
         <p>Cliente: {JSON.stringify(quickcupState.cliente)}</p>
+        <p>Endereços: {JSON.stringify(quickcupState.enderecos)}</p>
       </main>
     </div>
   );
