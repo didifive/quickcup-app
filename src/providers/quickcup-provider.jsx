@@ -1,6 +1,5 @@
-import React, { createContext, useCallback, useState } from "react";
+import React, { createContext, useCallback, useState, useEffect } from "react";
 import apiQuickCup from "../services/quickcup-api";
-import { minutosEmMilisegundos, cacheEmMinutos } from "../utils/constants";
 
 export const QuickCupContext = createContext({
   loading: false,
@@ -10,15 +9,11 @@ export const QuickCupContext = createContext({
   grupos: [],
   produtos: [],
   pedidos: [],
-  ultimoGetBasico: null,
 });
-
 
 const QuickCupProvider = ({ children }) => {
     const [quickcupState, setQuickcupState] = useState(
-      sessionStorage.getItem("quickcup")
-        ? JSON.parse(sessionStorage.getItem("quickcup"))
-        : {
+       {
             loading: false,
             empresa: {},
             cliente: {},
@@ -26,51 +21,25 @@ const QuickCupProvider = ({ children }) => {
             grupos: [],
             produtos: [],
             pedidos: [],
-            ultimoGetEmpresa: null,
-            ultimoGetGrupo: null,
-            ultimoGetProduto: null,
           }
     );
 
     const getQuickCupBasico = async () => {
-      const agora = new Date();
-      const basicoPreenchido = 
-          Object.keys(quickcupState.empresa).length > 0 
-          && quickcupState.produtos.length > 0
-          && quickcupState.grupos.length > 0;
-      const ultimoGetBasico = quickcupState.ultimoGetBasico; 
-      
-      if (
-         basicoPreenchido &&
-         ultimoGetBasico &&
-         (agora - ultimoGetBasico) / minutosEmMilisegundos < cacheEmMinutos
-       ) {
-         return;
-       }
 
       setQuickcupState((prevState) => ({
         ...prevState,
         loading: true,
       }));
 
-      obterEmpresa();
-      obterGrupos();
-      obterProdutosAtivos();
+      await obterEmpresa();
+      await obterGrupos();
+      await obterProdutosAtivos();
 
       setQuickcupState((prevState) => ({
         ...prevState,
         loading: false,
-        ultimoGetBasico: agora,
       }));
 
-      if (!basicoPreenchido){
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          ultimoGetBasico: null,
-        }));
-      }
-
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     }
 
     const obterEmpresa = async () => {
@@ -161,7 +130,6 @@ const QuickCupProvider = ({ children }) => {
         }));
       }
 
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const obterEnderecosCliente = async (clienteId) => {
@@ -193,7 +161,6 @@ const QuickCupProvider = ({ children }) => {
         }));
       }
 
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const adicionarEndereco = async (endereco) => {
@@ -222,7 +189,6 @@ const QuickCupProvider = ({ children }) => {
         }));
       }
 
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const atualizarEndereco = async (enderecoId, endereco) => {
@@ -259,7 +225,6 @@ const QuickCupProvider = ({ children }) => {
         }));
       }
 
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
 
     const removerEndereco = async (enderecoId) => {
@@ -290,11 +255,7 @@ const QuickCupProvider = ({ children }) => {
         }));
       }
 
-      sessionStorage.setItem("quickcup", JSON.stringify(quickcupState));
     };
-
-
-
 
     const contextValue = {
       quickcupState,

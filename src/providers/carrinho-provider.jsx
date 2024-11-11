@@ -1,36 +1,19 @@
 import React, { createContext, useCallback, useState } from "react";
 
-export const CarrinhoContext = createContext();
+export const CarrinhoContext = createContext({
+  itens: [],
+});
 
 const CarrinhoProvider = ({ children }) => {
     const [carrinhoState, setCarrinhoState] = useState(
-      localStorage.getItem("carrinho") 
-        ? JSON.parse(localStorage.getItem("carrinho")) 
-        : {
-            clienteId: "",
-            enderecoId: "",
-            valorOriginal: 0,
-            valorDesconto: 0,
-            valorEntrega: 0,
-            itensCarrinho: [],
-          }
+      {
+        itens: [],
+      }
     );
 
-    const abreCarrinho = (clienteId) => {
-      if (!clienteId) {
-        return;
-      }
-
-      setCarrinhoState((prevState) => ({
-        ...prevState,
-        clienteId: clienteId,
-      }));
-
-      localStorage.setItem("carrinho", JSON.stringify(carrinhoState));
-    };
-
     const adicionaItem = (produto, quantidade) => {
-      
+
+
       if (!produto || !quantidade) {
         return;
       }
@@ -39,28 +22,23 @@ const CarrinhoProvider = ({ children }) => {
       if (quantidade <= 0) {
         return;      
       }
-      
-      const valorUnitarioOriginal = parseFloat(produto.valorOriginal).toFixed(2);
-      const valorUnitarioDesconto = parseFloat(produto.valorDesconto).toFixed(2);
-      const valorUnitario = parseFloat((produto.valorOriginal - produto.valorDesconto).toFixed(2));
+
+      if (carrinhoState.itens.some((item) => item.produtoId === produto.id)) {
+        quantidade += carrinhoState.itens.find((item) => item.produtoId === produto.id).quantidade;
+        atualizaQuantidadeItem(produto.id, quantidade);
+        return;
+      }
 
       setCarrinhoState((prevState) => ({
         ...prevState,
-        valorOriginal: prevState.valorOriginal + parseFloat(valorUnitarioOriginal * quantidade).toFixed(2),
-        valorDesconto: prevState.valorOriginal + parseFloat(valorUnitarioDesconto * quantidade).toFixed(2),
-        itensCarrinho : [
-          ...prevState.itensCarrinho, 
+        itens : [
+          ...prevState.itens, 
           {
-            produtoId: produto.id, 
+            produto: produto, 
             quantidade: quantidade,
-            valorUnitarioOriginal: valorUnitarioOriginal,
-            valorUnitarioDesconto: valorUnitarioDesconto,
-            valorUnitario: valorUnitario
           }
       ]
       }));
-
-      localStorage.setItem("carrinho", JSON.stringify(carrinhoState));
     };
 
     const atualizaQuantidadeItem = (produtoId, novaQuantidade) => {
@@ -70,30 +48,14 @@ const CarrinhoProvider = ({ children }) => {
 
       novaQuantidade = parseInt(novaQuantidade);
       if (novaQuantidade <= 0) {
-        excluiItem(produtoId);
+        excluirItem(produtoId);
         return;      
       }
 
-      const prevState = carrinhoState;
-      const item = prevState.itensCarrinho.find((item) => item.produtoId === produtoId);
-      if (!item) {
-        return;
-      }
-      const novoValorOriginal = 
-        prevState.valorOriginal 
-        - parseFloat(item.valorUnitarioOriginal * item.quantidade).toFixed(2) 
-        + parseFloat(item.valorUnitarioOriginal * novaQuantidade).toFixed(2);
-      const novoValorDesconto = 
-        prevState.valorDesconto 
-        - parseFloat(item.valorUnitarioDesconto * item.quantidade).toFixed(2) 
-        + parseFloat(item.valorUnitarioDesconto * novaQuantidade).toFixed(2);
-
       setCarrinhoState((prevState) => ({
         ...prevState,
-        valorOriginal: novoValorOriginal,
-        valorDesconto: novoValorDesconto,
-        itensCarrinho: prevState.itensCarrinho.map((item) => {
-          if (item.produtoId === produtoId) {
+        itens: prevState.itens.map((item) => {
+          if (item.produto.id === produtoId) {
             return {
               ...item,
               quantidade: novaQuantidade,
@@ -102,8 +64,6 @@ const CarrinhoProvider = ({ children }) => {
           return item;
         })
       }));
-
-      localStorage.setItem("carrinho", JSON.stringify(carrinhoState));
     };
 
     const excluirItem = (produtoId) => {
@@ -111,31 +71,14 @@ const CarrinhoProvider = ({ children }) => {
         return;
       }
 
-      const prevState = carrinhoState;
-      const item = prevState.itensCarrinho.find((item) => item.produtoId === produtoId);
-      if (!item) {
-        return;
-      }
-      const novoValorOriginal = 
-        prevState.valorOriginal 
-        - parseFloat(item.valorUnitarioOriginal * item.quantidade).toFixed(2);
-      const novoValorDesconto = 
-        prevState.valorDesconto 
-        - parseFloat(item.valorUnitarioDesconto * item.quantidade).toFixed(2);
-
       setCarrinhoState((prevState) => ({
         ...prevState,
-        valorOriginal: novoValorOriginal,
-        valorDesconto: novoValorDesconto,
-        itensCarrinho: prevState.itensCarrinho.filter((item) => item.produtoId !== produtoId)
+        itens: prevState.itens.filter((item) => item.produto.id !== produtoId)
       }));
-
-      localStorage.setItem("carrinho", JSON.stringify(carrinhoState));
     };
 
   const carrinho = {
     carrinhoState,
-    abreCarrinho: useCallback((clienteId) => enviarCliente(clienteId), []),
     adicionaItem: useCallback(
       (produto, quantidade) => adicionaItem(produto, quantidade),
       []

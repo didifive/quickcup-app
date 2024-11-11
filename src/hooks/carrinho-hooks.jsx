@@ -4,7 +4,6 @@ import { CarrinhoContext } from "../providers/carrinho-provider";
 const useCarrinho = () => {
   const {
     carrinhoState,
-    abreCarrinho,
     adicionaItem,
     atualizaQuantidadeItem,
     excluirItem,
@@ -12,7 +11,6 @@ const useCarrinho = () => {
 
   return {
     carrinhoState,
-    abreCarrinho,
     adicionaItem,
     atualizaQuantidadeItem,
     excluirItem,

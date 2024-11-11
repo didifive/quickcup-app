@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useQuickCup from "../hooks/quickcup-hooks";
 import useCarrinho from "../hooks/carrinho-hooks";
 
@@ -23,6 +24,15 @@ const Home = () => {
     enviarCliente(clienteTeste);
     obterEnderecosCliente(quickcupState.cliente.id);
   }, []); 
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Object.keys(quickcupState.empresa).length > 0 
+      && !quickcupState.empresa.aberto) {
+      navigate("/fechado");    
+    } 
+  }, [quickcupState.empresa]);
 
   return (
         <div className="container">

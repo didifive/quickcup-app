@@ -1,6 +1,16 @@
 const path = require("path");
 const webpack = require("webpack");
+const dotenv = require("dotenv");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+const env = dotenv.config().parsed || {};
+
+const envKeys = Object.keys(env)
+  .filter((key) => key.startsWith("REACT_APP"))
+  .reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+    return prev;
+  }, {});
 
 module.exports = {
   entry: "./src/index.js",
@@ -24,7 +34,7 @@ module.exports = {
             loader: "file-loader",
           },
         ],
-      }
+      },
     ],
   },
   resolve: {
@@ -34,5 +44,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
+    new webpack.DefinePlugin(envKeys),
   ],
+  devServer: {
+    historyApiFallback: true, 
+  },
 };
