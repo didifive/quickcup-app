@@ -7,6 +7,7 @@ import Menu from "./pages/Menu";
 import Fechado from "./pages/Fechado";
 import Loading from "./components/Loading";
 import Carrinho from "./pages/Carrinho";
+import Layout from "./components/Layout";
 
 const App = () => {
   const { quickcupState } = useQuickCup();
@@ -16,9 +17,11 @@ const App = () => {
       {quickcupState.loading && <Loading />}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Menu />} />
-          <Route path="/fechado" element={<Fechado />} />
-          <Route path="/carrinho" element={<Carrinho />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Menu />} />
+            <Route path="carrinho" element={<Carrinho />} />
+          </Route>
+          <Route path="fechado" element={<Fechado />} />
         </Routes>
       </BrowserRouter>
     </>

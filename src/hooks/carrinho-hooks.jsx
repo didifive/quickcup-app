@@ -7,6 +7,7 @@ const useCarrinho = () => {
     adicionaItem,
     atualizaQuantidadeItem,
     excluirItem,
+    limparCarrinho,
   } = useContext(CarrinhoContext);
 
   return {
@@ -14,6 +15,7 @@ const useCarrinho = () => {
     adicionaItem,
     atualizaQuantidadeItem,
     excluirItem,
+    limparCarrinho,
   };
 };
 

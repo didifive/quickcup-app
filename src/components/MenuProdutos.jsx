@@ -32,67 +32,104 @@ const MenuProdutos = ({ produtos }) => {
       )}
       {produtos.map((produto, index) => (
         <div key={index}>
-          <div className="d-flex align-items-center align-items-md-start align-items-xl-center">
-            <div className="w-25 w-max-50 me-2 justify-content-center align-items-center">
-              <img
-                className="rounded w-100"
-                src={produto.imagem ? produto.imagem : logo}
-                alt={`foto ${produto.nome}`}
-              />
-            </div>
-            <div>
-              <h5>{produto.nome}</h5>
-              <p className="text-muted text-xxs">
-                {produto.descricao.substring(0, 50)}...
-              </p>
-              <div className="input-group mb-3">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() =>
-                    handleQuantidadeChange(
-                      produto.id,
-                      (quantidades[produto.id] || 0) - 1
-                    )
-                  }
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="0"
-                  value={quantidades[produto.id] || ""}
-                  onChange={(e) =>
-                    handleQuantidadeChange(produto.id, parseInt(e.target.value))
-                  }
+          <div className="col d-flex flex-column mx-auto">
+            <div className="d-flex align-items-center align-items-md-start align-items-xl-center">
+              <div className="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center col-3 pe-2">
+                <img
+                  className="rounded w-100"
+                  src={produto.imagem ? produto.imagem : logo}
+                  alt={`foto ${produto.nome}`}
                 />
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() =>
-                    handleQuantidadeChange(
-                      produto.id,
-                      (quantidades[produto.id] || 0) + 1
-                    )
-                  }
-                >
-                  +
-                </button>
               </div>
-              <a
-                href="#"
-                type="button"
-                className="btn btn-primary"
-                onClick={() => {
-                  adicionarProdutoAoCarrinho(
-                    produto,
-                    quantidades[produto.id]
-                  )
-                }}
-              >
-                + Carrinho
-              </a>
+              <div className="d-flex flex-column col-9">
+                <div className="d-flex">
+                  <div className="col-8 flex-shrink-1">
+                    <h4>{produto.nome}</h4>
+                    <p className="fw-light text-muted text-truncate">
+                      {produto.descricao}
+                    </p>
+                  </div>
+                  <div className="d-flex flex-column col-4 flex-grow-1 align-items-end">
+                    {produto.valorDesconto && produto.valorDesconto >= 0 ? (
+                      <>
+                        <p className="fw-light text-danger text-decoration-line-through mb-0">
+                          {produto.valorOriginal.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </p>
+                        <p className="fw-semibold fs-2 my-0">
+                          {(
+                            produto.valorOriginal - produto.valorDesconto
+                          ).toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="fw-semibold fs-2">
+                        {produto.valorOriginal.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="input-group">
+                  <span className="input-group-text">Quantidade</span>
+                  <button
+                    className="btn btn-light"
+                    type="button"
+                    onClick={() =>
+                      handleQuantidadeChange(
+                        produto.id,
+                        (quantidades[produto.id] || 0) - 1
+                      )
+                    }
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    className="form-control"
+                    placeholder="0"
+                    value={quantidades[produto.id] || ""}
+                    onChange={(e) =>
+                      handleQuantidadeChange(
+                        produto.id,
+                        parseInt(e.target.value)
+                      )
+                    }
+                  />
+                  <button
+                    className="btn btn-light"
+                    type="button"
+                    onClick={() =>
+                      handleQuantidadeChange(
+                        produto.id,
+                        (quantidades[produto.id] || 0) + 1
+                      )
+                    }
+                  >
+                    +
+                  </button>
+                </div>
+                <a
+                  href="#"
+                  type="button"
+                  className="btn btn-primary flex-grow-1 flex-shrink-0 flex-fill mt-2"
+                  onClick={() => {
+                    adicionarProdutoAoCarrinho(
+                      produto,
+                      quantidades[produto.id]
+                    );
+                  }}
+                >
+                  + Carrinho
+                </a>
+              </div>
             </div>
           </div>
           <hr className="my-3" />

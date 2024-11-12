@@ -9,12 +9,12 @@ const MenuGrupos = ({ grupos, produtos }) => {
           <div className="row">
             <div
               id={`grupo-${grupo.nome}`}
-              className="col-md-8 col-xl-7 mx-auto text-xs"
+              className="col-md-8 col-xl-7 mx-auto"
             >
-              <h3 className="mt-3">{grupo.nome}</h3>
+              <h3 className="display-6">{grupo.nome}</h3>
             </div>
           </div>
-          <div className="col-md-8 col-xl-7 mx-auto text-xs">
+          <div className="col-md-8 col-xl-7 mx-auto">
             <MenuProdutos
               produtos={produtos.filter(
                 (produto) => produto.grupoId === grupo.id
