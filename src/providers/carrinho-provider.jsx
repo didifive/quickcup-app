@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useReducer } from "react";
+import React, { createContext, useCallback, useEffect, useReducer, useRef } from "react";
 import {
   ADICIONA_ITEM,
   ATUALIZA_QUANTIDADE,
@@ -55,18 +55,20 @@ function carrinhoReducer(state, action) {
 
 const carrinhoInitial = localStorage.getItem(LOCAL_STORAGE_CARRINHO)
   ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_CARRINHO))
-  : {
+  : [{
       itens: [],
-    };
+    }];
 
 const CarrinhoProvider = ({ children }) => {
     const [carrinhoState, dispatchCarrinho] = useReducer(carrinhoReducer, carrinhoInitial);
+    const carrinhoRef = useRef(carrinhoState);
 
     useEffect(() => {
       localStorage.setItem(
         LOCAL_STORAGE_CARRINHO,
         JSON.stringify(carrinhoState)
       );
+      carrinhoRef.current = carrinhoState;
     }, [carrinhoState]);
 
     const adicionaItem = (produto, quantidade) => {
@@ -78,19 +80,25 @@ const CarrinhoProvider = ({ children }) => {
       if (quantidade <= 0) {
         return;      
       }
+      
+      console.log(carrinhoRef.current.itens);
 
       let itemEncontrado = null;
-      for (let item of carrinhoState.itens) {
+      for (let item of carrinhoRef.current.itens) {
         if (item.produto.id === produto.id) {
           itemEncontrado = item;
           break;
         }
       }
-      
       if (itemEncontrado) {
-        quantidade += itemEncontrado.quantidade;
-        console.log(quantidade);
-        atualizaQuantidadeItem(produto.id, quantidade);
+        const novaQuantidade = itemEncontrado.quantidade + quantidade;
+        dispatchCarrinho({
+          type: ATUALIZA_QUANTIDADE,
+          payload: {
+            produtoId: produto.id,
+            quantidade: novaQuantidade,
+          },
+        });
         return;
       }
 

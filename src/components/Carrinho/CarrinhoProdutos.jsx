@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/img/quickcup-logo.png";
+import logo from "../../assets/img/quickcup-logo.png";
 import useCarrinho from "../../hooks/carrinho-hooks";
 
 const MenuProdutos = ({ itens }) => { 

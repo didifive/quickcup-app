@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useQuickCup from "../hooks/quickcup-hooks";
-import MenuGrupos from "../components/MenuGrupos";
+import MenuGrupos from "../components/Menu/MenuGrupos";
 
 const Menu = () => {
   const {

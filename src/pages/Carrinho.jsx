@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useQuickCup from "../hooks/quickcup-hooks";
 import useCarrinho from "../hooks/carrinho-hooks";
-import CarrinhoProdutos from "../components/CarrinhoProdutos";
+import CarrinhoProdutos from "../components/Carrinho/CarrinhoProdutos";
 
 const Carrinho = () => {
   const { quickcupState } = useQuickCup();
