@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useQuickCup from "../hooks/quickcup-hooks";
 import logo from "../assets/img/quickcup-logo.png";
-import FuncionamentosEspeciais from "../components/FuncionamentosEspeciais";
-import FuncionamentoSemanal from "../components/FuncionamentoSemanal";
+import FuncionamentosEspeciais from "../components/Fechado/FuncionamentosEspeciais";
+import FuncionamentoSemanal from "../components/Fechado/FuncionamentoSemanal";
 
 const Fechado = () => {
   const {

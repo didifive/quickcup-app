@@ -7,7 +7,7 @@ import Menu from "./pages/Menu";
 import Fechado from "./pages/Fechado";
 import Loading from "./components/Loading";
 import Carrinho from "./pages/Carrinho";
-import Layout from "./components/Layout";
+import Layout from "./pages/Layout";
 
 const App = () => {
   const { quickcupState } = useQuickCup();
