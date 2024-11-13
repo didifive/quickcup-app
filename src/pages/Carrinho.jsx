@@ -110,9 +110,7 @@ const Carrinho = () => {
                 >
                   <p className="fw-bold text-center display-6">
                     Total do Pedido: R${" "}
-                    {(valorTotalProdutos + frete)
-                      .toFixed(2)
-                      .toLocaleString("pt-BR", {
+                    {(valorTotalProdutos + frete).toFixed(2).toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}

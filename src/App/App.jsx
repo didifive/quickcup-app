@@ -9,6 +9,7 @@ import Carrinho from "../pages/Carrinho";
 import Layout from "../pages/Layout";
 import Cliente from "../pages/Cliente";
 import { AVISO_FACULDADE } from "../utils/storage-names";
+import Endereco from "../pages/Endereco";
 
 const App = () => {
   
@@ -47,6 +48,7 @@ const App = () => {
           <Route index element={<Menu />} />
           <Route path="carrinho" element={<Carrinho />} />
           <Route path="cliente" element={<Cliente />} />
+          <Route path="/endereco/:id?" element={<Endereco />} />
         </Route>
         <Route
           path="fechado"
@@ -62,4 +64,5 @@ const AppWrapper = () => (
     <App />
   </BrowserRouter>
 );
+
 export default AppWrapper;

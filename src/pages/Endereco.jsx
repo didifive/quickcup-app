@@ -1,30 +1,33 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useCliente from "../hooks/cliente-hooks";
-import InputTelefone from "../components/Cliente/InputTelefone";
 
-const Endereco = (enderecoId) => {
+const Endereco = () => {
   const { clienteState, adicionarEndereco, atualizarEndereco } = useCliente();
+
+  const { id } = useParams();
 
   const navigate = useNavigate();
 
-  const nomeInicial =
-    Object.keys(clienteState).length > 0 && 
-    Object.keys(clienteState.cliente).length > 0
-      ? clienteState.cliente.nome
-      : "";
+  let enderecoEncontrado = {};
+  for (let i = 0; i < clienteState.enderecos.length; i++) { 
+    if (clienteState.enderecos[i].id === Number(id)) { 
+      enderecoEncontrado = clienteState.enderecos[i];
+      break; 
+    }
+  }
 
-  const telefoneInicial =
-    Object.keys(clienteState).length > 0 &&
-    Object.keys(clienteState.cliente).length > 0
-      ? clienteState.cliente.telefone
-      : "";
+  const nomeInicial = enderecoEncontrado.nome;
+  const logradouroInicial = enderecoEncontrado.logradouro;
+  const numeroInicial = enderecoEncontrado.numero;
+  const complementoInicial = enderecoEncontrado.complemento;
+  const bairroInicial = enderecoEncontrado.bairro;
 
   const [nome, setNome] = useState(nomeInicial);
-  const [logradouro, setLogradouro] = useState(telefoneInicial);
-  const [numero, setNumero] = useState(telefoneInicial);
-  const [complemento, setComplemento] = useState(telefoneInicial);
-  const [bairro, setBairro] = useState(telefoneInicial);
+  const [logradouro, setLogradouro] = useState(logradouroInicial);
+  const [numero, setNumero] = useState(numeroInicial);
+  const [complemento, setComplemento] = useState(complementoInicial);
+  const [bairro, setBairro] = useState(bairroInicial);
   const [erroNome, setErroNome] = useState(null);
   const [erroLogradouro, setErroLogradouro] = useState(null);
   const [erroNumero, setErroNumero] = useState(null);
@@ -68,7 +71,7 @@ const Endereco = (enderecoId) => {
     } 
 
     const endereco = {
-      id: enderecoId ? enderecoId : null,
+      id: id,
       clienteId: clienteState.cliente.id,
       nome: nome,
       logradouro: logradouro,
@@ -82,7 +85,7 @@ const Endereco = (enderecoId) => {
     }; 
 
     if(envia) {
-      if (enderecoId) {
+      if (id) {
         atualizarEndereco(endereco.id, endereco);
       }
         adicionarEndereco(endereco);
@@ -141,7 +144,7 @@ const Endereco = (enderecoId) => {
             <label>Complemento:</label>
             <input
               type="text"
-              value={bairro}
+              value={complemento}
               onChange={handleComplementoChange}
               className="form-control"
             />
@@ -164,6 +167,4 @@ const Endereco = (enderecoId) => {
   );
 };
 
-
-
-export default Cliente;
+export default Endereco;

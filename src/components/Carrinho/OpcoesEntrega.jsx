@@ -1,8 +1,16 @@
 import React from "react";
-
-const ZERO = 0;
+import { useNavigate } from "react-router-dom";
 
 const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange, frete }) => {
+  const navigate = useNavigate();
+
+  const editarEndereco = (id) => {
+    if (!id) {
+      return;
+    }
+    navigate("/endereco/"+id);
+  };
+
   const dentroLimiteEnderecos = enderecos.length < 4;
 
   const opcoesEnderecos = enderecos.map((endereco, index) => (
@@ -29,22 +37,24 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
         <label htmlFor={`endereco-${index}`}>
           <span className="fw-semibold">{endereco.nome}</span>
           <br />
-          {endereco.logradouro}, {endereco.numero} {endereco.complemento} -{" "}
-          {endereco.bairro}
+          <span className="fw-light">
+            {endereco.logradouro}, {endereco.numero} {endereco.complemento} -{" "}
+            {endereco.bairro}
+          </span>
         </label>
       </div>
-      <div className="d-flex flex-row justify-content-between">
+      <div className="d-flex flex-row justify-content-around">
         <button
           type="button"
-          className="btn btn-link"
-          onClick={() => editarEndereco()}
+          className="btn btn-link text-decoration-none"
+          onClick={() => editarEndereco(endereco.id)}
         >
           Editar
         </button>
         <button
           type="button"
-          className="btn btn-link"
-          onClick={() => editarEndereco()}
+          className="btn btn-link text-danger text-decoration-none"
+          onClick={() => excluirEndereco()}
         >
           Excluir
         </button>
@@ -56,7 +66,7 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
     <>
       <div className="form-group">
         {opcoesEnderecos}
-        {dentroLimiteEnderecos &&
+        {dentroLimiteEnderecos && (
           <button
             type="button"
             className="btn btn-outline-primary my-2"
@@ -64,8 +74,7 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
           >
             Adicionar novo endereço
           </button>
-        }
-        <hr />
+        )}
         <div
           className="my-2"
           style={{
@@ -88,7 +97,10 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
             <label htmlFor="retira">
               <span className="fw-semibold">Retirar na loja</span> (Sem taxa de
               entrega) <br />
-              {empresa.logradouro}, {empresa.numero} - {empresa.bairro}
+              <span className="fw-light">
+                Endereço da loja para retirar: {empresa.logradouro},{" "}
+                {empresa.numero} - {empresa.bairro}
+              </span>
             </label>
           </div>
         </div>

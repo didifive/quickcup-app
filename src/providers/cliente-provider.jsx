@@ -106,8 +106,6 @@ const ClienteProvider = ({ children }) => {
       try {
         const resposta = await apiQuickCup.post("/cliente", cliente);
 
-        console.log(resposta);
-
         if (resposta.status !== 200) {
           throw new Error(resposta);
         }
