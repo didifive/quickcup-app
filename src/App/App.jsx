@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import useQuickCup from "../hooks/quickcup-hooks";
 
@@ -8,6 +8,7 @@ import Loading from "./Loading";
 import Carrinho from "../pages/Carrinho";
 import Layout from "../pages/Layout";
 import Cliente from "../pages/Cliente";
+import { AVISO_FACULDADE } from "../utils/storage-names";
 
 const App = () => {
   
@@ -16,6 +17,18 @@ const App = () => {
 
   useEffect(() => {
     getQuickCupBasico();
+
+    const showAlert = () => {
+      const avisoVisto = sessionStorage.getItem(AVISO_FACULDADE);
+
+      if (!avisoVisto) {
+        alert(
+          "Este aplicativo foi criado exclusivamente para a entrega do trabalho semestral da faculdade UNIFRAN / Cruzeiro do Sul para o segundo semestre de 2024. Todo o conteúdo é fictício. No rodapé da página tem o link para o repositório do projeto no GitHub (Repo GitHub) com mais detalhes, visite ele para mais informações."
+        );
+        sessionStorage.setItem(AVISO_FACULDADE, true);
+      }
+    };
+    showAlert();
   }, []); 
 
   useEffect(() => {
