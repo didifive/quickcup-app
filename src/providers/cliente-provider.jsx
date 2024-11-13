@@ -4,7 +4,10 @@ import apiQuickCup from "../services/quickcup-api";
 import {
   GET_CLIENTE,
   GET_ENDERECOS,
-  GET_PEDIDOS
+  GET_PEDIDOS,
+  ADICIONA_ENDERECO, 
+  ATUALIZA_ENDERECO, 
+  EXCLUI_ENDERECO,
 } from "../utils/cliente-actions";
 import { SESSION_STORAGE_CLIENTE } from "../utils/storage-names";
 
@@ -32,6 +35,33 @@ function clienteReducer(state, action) {
       return {
         ...state,
         pedidos: action.payload,
+      };
+    }
+    case ADICIONA_ENDERECO: {
+      return {
+        ...state,
+        enderecos: [...state.enderecos, action.payload],
+      };
+    }
+    case ATUALIZA_ENDERECO: {
+      return {
+        ...state,
+        enderecos: state.enderecos.map((endereco) => {
+          if (endereco.id === action.payload.enderecoId) {
+            return {
+              ...action.payload.endereco,
+            };
+          }
+          return endereco;
+        }),
+      };
+    }
+    case EXCLUI_ENDERECO: {
+      return {
+        ...state,
+        enderecos: state.enderecos.filter(
+          (endereco) => endereco.id !== action.payload
+        ),
       };
     }
     default: {
@@ -140,99 +170,82 @@ const ClienteProvider = ({ children }) => {
       }
     };
 
-    // const adicionarEndereco = async (endereco) => {
-    //   if (!endereco) {
-    //     return;
-    //   }
+    const adicionarEndereco = async (endereco) => {
+      if (!endereco || Object.keys(endereco) === 0) {
+        return;
+      }
 
-    //   setQuickcupState((prevState) => ({
-    //     ...prevState,
-    //     loading: true,
-    //   }));
+      updateLoading(true);
 
-    //   try {
-    //     const {data : endereco} = await apiQuickCup.post("/endereco", endereco);
+      try {
+        const {data : endereco} = await apiQuickCup.post("/endereco", endereco);
 
-    //     setQuickcupState((prevState) => ({
-    //       ...prevState,
-    //       loading: false,
-    //       enderecos: [...prevState.enderecos, endereco],
-    //     }));
-    //   } catch (error) {
-    //     console.error(error);
-    //     setQuickcupState((prevState) => ({
-    //       ...prevState,
-    //       loading: false,
-    //     }));
-    //   }
+        dispatchCliente({
+          type: ADICIONA_ENDERECO,
+          payload: endereco,
+        });
+      } catch (error) {
+        throw new Error(error);
+      }
 
-    // };
+      updateLoading(false);
 
-    // const atualizarEndereco = async (enderecoId, endereco) => {
-    //   if (!enderecoId || !endereco) {
-    //     return;
-    //   }
+    };
 
-    //   setQuickcupState((prevState) => ({
-    //     ...prevState,
-    //     loading: true,
-    //   }));
+    const atualizarEndereco = async (enderecoId, endereco) => {
+      if (!enderecoId || !endereco || Object.keys(endereco) === 0) {
+        return;
+      }
 
-    //   try {
-    //     const { data: endereco } = await apiQuickCup.put(
-    //       `/endereco/${enderecoId}`,
-    //       endereco
-    //     );
+      updateLoading(true);
 
-    //     setQuickcupState((prevState) => ({
-    //       ...prevState,
-    //       loading: false,
-    //       enderecos: prevState.enderecos.map((enderecoExistente) => {
-    //         if (enderecoExistente.id === enderecoId) {
-    //           return endereco;
-    //         }
-    //         return enderecoExistente;
-    //       }),
-    //     }));
-    //   } catch (error) {
-    //     console.error(error);
-    //     setQuickcupState((prevState) => ({
-    //       ...prevState,
-    //       loading: false,
-    //     }));
-    //   }
+      try {
+        const { data: endereco } = await apiQuickCup.put(
+          `/endereco/${enderecoId}`,
+          endereco
+        );
 
-    // };
+        dispatchCliente({
+          type: ATUALIZA_ENDERECO,
+          payload: {
+            enderecoId,
+            endereco,
+          }
+        });
+      } catch (error) {
+        throw new Error(error);
+      }
 
-    // const removerEndereco = async (enderecoId) => {
-    //   if (!enderecoId) {
-    //     return;
-    //   } 
+      updateLoading(false);
 
-    //   setQuickcupState((prevState) => ({
-    //     ...prevState,
-    //     loading: true,        
-    //   }));
+    };
 
-    //   try {        
-    //     await apiQuickCup.delete(`/endereco/${enderecoId}`);
+    const removerEndereco = async (enderecoId) => {
+      if (!enderecoId) {
+        return;
+      } 
 
-    //     setQuickcupState((prevState) => ({
-    //       ...prevState,
-    //       loading: false,
-    //       enderecos: prevState.enderecos.filter(
-    //         (enderecoExistente) => enderecoExistente.id !== enderecoId
-    //       ),
-    //     }));
-    //   } catch (error) {
-    //     console.error(error);
-    //     setQuickcupState((prevState) => ({
-    //       ...prevState,
-    //       loading: false,
-    //     }));
-    //   }
+      updateLoading(true);
 
-    // };
+      try {        
+        const resposta = await apiQuickCup.delete(`/endereco/${enderecoId}`);
+
+        if (resposta.status !== 204) {
+          return;
+        }
+
+        dispatchCliente({
+          type: EXCLUI_ENDERECO,
+          payload: enderecoId,
+        });
+
+      } catch (error) {
+        throw new Error(error);
+      }
+
+      updateLoading(false);
+
+    };
 
     const contextValue = {
       clienteState,
@@ -240,18 +253,18 @@ const ClienteProvider = ({ children }) => {
         (cliente) => sendAndGetCliente(cliente),
         []
       ),
-      // adicionarEndereco: useCallback(
-      //   (endereco) => adicionarEndereco(endereco),
-      //   []
-      // ),
-      // atualizarEndereco: useCallback(
-      //   (enderecoId, endereco) => atualizarEndereco(enderecoId, endereco),
-      //   []
-      // ),
-      // removerEndereco: useCallback(
-      //   (enderecoId) => removerEndereco(enderecoId),
-      //   []
-      // ),
+      adicionarEndereco: useCallback(
+        (endereco) => adicionarEndereco(endereco),
+        []
+      ),
+      atualizarEndereco: useCallback(
+        (enderecoId, endereco) => atualizarEndereco(enderecoId, endereco),
+        []
+      ),
+      removerEndereco: useCallback(
+        (enderecoId) => removerEndereco(enderecoId),
+        []
+      ),
     };
 
     return (

@@ -15,7 +15,11 @@ const Carrinho = () => {
   const [opcaoSelecionada, setOpcaoSelecionada] = useState("");
   const handleFreteChange = (event) => {
     setOpcaoSelecionada(event.target.value);
-    setFrete(Number(event.target.value));
+    if (Number(event.target.value) === 0) {
+      setFrete(Number(0));
+      return;
+    }
+    setFrete(quickCupState.empresa.valorEntrega);
   };
   
   const navigate = useNavigate();
@@ -78,11 +82,22 @@ const Carrinho = () => {
               <>
                 <hr />
                 <p className="display-4">Entrega:</p>
-                <OpcoesEntrega
-                  opcaoSelecionada={opcaoSelecionada}
-                  handleFreteChange={handleFreteChange}
-                  frete={frete}
-                />
+                <div
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "15px",
+                    margin: "0",
+                    padding: "20px 10px",
+                  }}
+                >
+                  <OpcoesEntrega
+                    empresa={quickCupState.empresa}
+                    enderecos={clienteState.enderecos}
+                    opcaoSelecionada={opcaoSelecionada}
+                    handleFreteChange={handleFreteChange}
+                    frete={frete}
+                  />
+                </div>
                 <hr />
                 <div
                   className="d-flex flex-column my-3"
@@ -95,14 +110,20 @@ const Carrinho = () => {
                 >
                   <p className="fw-bold text-center display-6">
                     Total do Pedido: R${" "}
-                    {(valorTotalProdutos + frete).toFixed(2).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
+                    {(valorTotalProdutos + frete)
+                      .toFixed(2)
+                      .toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
                   </p>
-                  <Link to="/pedido" className="btn btn-primary mt-1">
+                  <button
+                    type="button"
+                    className="btn btn-primary my-3"
+                    onClick={() => fazerPedido()}
+                  >
                     Fazer o pedido
-                  </Link>
+                  </button>
                 </div>
               </>
             )}
@@ -115,7 +136,7 @@ const Carrinho = () => {
               className="btn btn-outline-secondary my-3"
               onClick={() => limparCarrinhoEDirecionaMenu()}
             >
-              Limpar carrinho
+              Esvaziar carrinho
             </button>
           </div>
         </div>
