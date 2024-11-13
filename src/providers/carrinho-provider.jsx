@@ -55,9 +55,9 @@ function carrinhoReducer(state, action) {
 
 const carrinhoInitial = localStorage.getItem(LOCAL_STORAGE_CARRINHO)
   ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_CARRINHO))
-  : [{
+  : {
       itens: [],
-    }];
+    };
 
 const CarrinhoProvider = ({ children }) => {
     const [carrinhoState, dispatchCarrinho] = useReducer(carrinhoReducer, carrinhoInitial);
@@ -80,8 +80,6 @@ const CarrinhoProvider = ({ children }) => {
       if (quantidade <= 0) {
         return;      
       }
-      
-      console.log(carrinhoRef.current.itens);
 
       let itemEncontrado = null;
       for (let item of carrinhoRef.current.itens) {
@@ -92,13 +90,7 @@ const CarrinhoProvider = ({ children }) => {
       }
       if (itemEncontrado) {
         const novaQuantidade = itemEncontrado.quantidade + quantidade;
-        dispatchCarrinho({
-          type: ATUALIZA_QUANTIDADE,
-          payload: {
-            produtoId: produto.id,
-            quantidade: novaQuantidade,
-          },
-        });
+        atualizaQuantidadeItem(itemEncontrado.produto.id, novaQuantidade);
         return;
       }
 
@@ -152,7 +144,7 @@ const CarrinhoProvider = ({ children }) => {
     };
 
     const carrinho = {
-      carrinhoState,
+      carrinhoState: carrinhoState,
       adicionaItem: useCallback(
         (produto, quantidade) => adicionaItem(produto, quantidade),
         []

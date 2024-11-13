@@ -1,92 +1,118 @@
-import React, { useState } from "react";
+import React from "react";
 import logo from "../../assets/img/quickcup-logo.png";
 import useCarrinho from "../../hooks/carrinho-hooks";
 
-const MenuProdutos = ({ itens }) => { 
+const CarrinhoProdutos = ({ itens }) => { 
 
-  const [quantidades, setQuantidades] = useState({});
-
-  const { atualizaQuantidadeItem, excluirItem, limparCarrinho } = useCarrinho();
+  const { atualizaQuantidadeItem, excluirItem } = useCarrinho();
 
   const handleQuantidadeChange = (id, quantidade) => {
     if(quantidade < 0) quantidade = 0;
-    setQuantidades((prevQuantidades) => ({
-      ...prevQuantidades,
-      [id]: quantidade,
-    }));
     atualizaQuantidadeItem(id, quantidade);
   };
 
   return (
     <>
       <div>
-        {itens.length === 0 && <p>Não há produtos no carrinho</p>}
         {itens.map((item, index) => (
           <div key={index}>
-            <div className="d-flex align-items-center align-items-md-start align-items-xl-center">
-              <div className="w-25 w-max-50 me-2 justify-content-center align-items-center">
-                <img
-                  className="rounded w-100"
-                  src={item.produto.imagem ? item.produto.imagem : logo}
-                  alt={`foto ${item.produto.nome}`}
-                />
-              </div>
-              <div>
-                <h5>{item.produto.nome}</h5>
-                <div className="input-group mb-3">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() =>
-                      handleQuantidadeChange(
-                        item.produto.id,
-                        (quantidades[item.produto.id] || 0) - 1
-                      )
-                    }
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    className="form-control"
-                    placeholder="0"
-                    value={quantidades[item.produto.id] || item.quantidade}
-                    onChange={(e) =>
-                      handleQuantidadeChange(
-                        item.produto.id,
-                        parseInt(e.target.value)
-                      )
-                    }
+            <div className="col d-flex flex-column mx-auto">
+              <div className="d-flex align-items-center align-items-md-start align-items-xl-center">
+                <div className="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center col-3 pe-2">
+                  <img
+                    className="rounded w-100"
+                    src={item.produto.imagem ? item.produto.imagem : logo}
+                    alt={`foto ${item.produto.nome}`}
                   />
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() =>
-                      handleQuantidadeChange(
-                        item.produto.id,
-                        (quantidades[item.produto.id] || 0) + 1
-                      )
-                    }
-                  >
-                    +
-                  </button>
                 </div>
-                <a
-                  href="#"
-                  type="button"
-                  className="btn btn-danger"
-                  onClick={() => excluirItem(item.produto.id)}
-                >
-                  Remover do carrinho
-                </a>
+                <div className="d-flex flex-column col-9">
+                  <div>
+                    <h4>{item.produto.nome}</h4>
+                    <div className="input-group d-flex">
+                      <button
+                        className="btn btn-sm btn-light"
+                        type="button"
+                        onClick={() =>
+                          handleQuantidadeChange(
+                            item.produto.id,
+                            (item.quantidade || 0) - 1
+                          )
+                        }
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        className="form-control grow-1 text-center"
+                        placeholder="0"
+                        value={item.quantidade || ""}
+                        onChange={(e) =>
+                          handleQuantidadeChange(
+                            item.produto.id,
+                            parseInt(e.target.value)
+                          )
+                        }
+                      />
+                      <button
+                        className="btn btn-sm btn-light"
+                        type="button"
+                        onClick={() =>
+                          handleQuantidadeChange(
+                            item.produto.id,
+                            (item.quantidade || 0) + 1
+                          )
+                        }
+                      >
+                        +
+                      </button>
+                      <a
+                        href="#"
+                        type="button"
+                        className="btn btn-sm btn-link ms-3 text-danger text-decoration-none"
+                        onClick={() => {
+                          excluirItem(item.produto.id);
+                        }}
+                      >
+                        Excluir Item
+                      </a>
+                    </div>
+                  </div>
+                  <div className="w-100 d-flex flex-row align-items-end justify-content-end">
+                    <p className="fw-light">
+                      Valor para {item.quantidade}x {item.produto.nome}:
+                    </p>
+                    <p className="fw-semibold fs-3 ms-2">
+                      {(
+                        (item.produto.valorOriginal -
+                          item.produto.valorDesconto) *
+                        item.quantidade
+                      ).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             <hr className="my-3" />
           </div>
         ))}
+        <p className="fw-semibold fs-2 my-0 text-end">
+          Total dos items:{" "}
+          {itens
+            .reduce(
+              (total, item) =>
+                total +
+                (item.produto.valorOriginal - item.produto.valorDesconto) *
+                  item.quantidade,
+              0
+            )
+            .toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+        </p>
       </div>
     </>
   );
 };
 
-export default MenuProdutos;
+export default CarrinhoProdutos;

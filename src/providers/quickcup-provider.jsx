@@ -1,80 +1,124 @@
-import React, { createContext, useCallback, useState, useEffect } from "react";
+import React, { createContext, useCallback, useEffect, useRef, useReducer } from "react";
 import apiQuickCup from "../services/quickcup-api";
+import {
+  GET_EMPRESA,
+  GET_GRUPOS,
+  GET_PRODUTOS,
+  LOADING,
+} from "../utils/quickcup-actions";
+import { SESSION_STORAGE_QUICKCUP } from "../utils/storage-names";
 
 export const QuickCupContext = createContext({
   loading: false,
   empresa: {},
-  cliente: {},
-  enderecos: [],
   grupos: [],
   produtos: [],
-  pedidos: [],
 });
 
+function quickCupReducer(state, action) {
+  switch (action.type) {
+    case GET_EMPRESA: {
+      return {
+        ...state,
+        empresa: action.payload,
+      };
+    }
+    case GET_GRUPOS: {
+      return {
+        ...state,
+        grupos: action.payload,
+      };
+    }
+    case GET_PRODUTOS: {
+      return {
+        ...state,
+        produtos: action.payload,
+      };
+    }
+    case LOADING: {
+      return {
+        ...state,
+        loading: action.payload,
+      };
+    }
+    default: {
+      throw Error("Unknown action: " + action.type);
+    }
+  }
+};
+
+const quickCupInitial = sessionStorage.getItem(SESSION_STORAGE_QUICKCUP)
+  ? JSON.parse(sessionStorage.getItem(SESSION_STORAGE_QUICKCUP))
+  : {
+      loading: true,
+      empresa: {},
+      enderecos: [],
+      produtos: [],
+    };
+
 const QuickCupProvider = ({ children }) => {
-    const [quickcupState, setQuickcupState] = useState(
-       {
-            loading: false,
-            empresa: {},
-            cliente: {},
-            enderecos: [],
-            grupos: [],
-            produtos: [],
-            pedidos: [],
-          }
+    const [quickCupState, dispatchQuickCup] = useReducer(
+      quickCupReducer,
+      quickCupInitial
     );
+    const quickCupRef = useRef(quickCupState);
+
+    useEffect(() => {
+      sessionStorage.setItem(
+        SESSION_STORAGE_QUICKCUP,
+        JSON.stringify(quickCupState)
+      );
+      quickCupRef.current = quickCupState;
+    }, [quickCupState]);
+
+    const updateLoading = (loading) => {
+      dispatchQuickCup({
+        type: LOADING,
+        payload: loading,
+      });
+    }
 
     const getQuickCupBasico = async () => {
 
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: true,
-      }));
+      updateLoading(true);
 
       await obterEmpresa();
       await obterGrupos();
       await obterProdutosAtivos();
 
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: false,
-      }));
+      updateLoading(false);
 
     }
 
     const obterEmpresa = async () => {
       try {
-        const { data:empresa } = await apiQuickCup.get("/empresa");
+        const { data : empresa } = await apiQuickCup.get("/empresa");
 
         if (!empresa) {
           throw new Error("Erro no sistema, empresa não encontrada");
         }
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          empresa: empresa,
-        }));
+
+        dispatchQuickCup({
+          type: GET_EMPRESA,
+          payload: empresa,
+        });
+
       } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          empresa: {},
-        }));
+        throw new Error(error);
       }
     };
 
     const obterGrupos = async () => {
       try {
         const { data: grupos } = await apiQuickCup.get("/grupo");
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          grupos: grupos
-        }));
+
+        dispatchQuickCup({
+          type: GET_GRUPOS,
+          payload: grupos,
+        });
+
       } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          grupos: []
-        }));
+        throw new Error(error);
       }
     };
 
@@ -83,198 +127,20 @@ const QuickCupProvider = ({ children }) => {
         const { data: produtos } = await apiQuickCup.get(
           "/produto/ativo"
         );
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          produtos: produtos
-        }));
+        dispatchQuickCup({
+          type: GET_PRODUTOS,
+          payload: produtos,
+        });
       } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          produtos: []
-        }));
+        throw new Error(error);
       }
-    };
-
-    const enviarCliente = async (cliente) => {
-      if (!cliente) {
-        return;
-      }
-      
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: true,
-      }));
-
-      try {
-        const resposta = await apiQuickCup.post("/cliente", cliente);
-
-        if (resposta.status === 404) {
-          throw new Error(resposta.data);
-        }
-
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          cliente: resposta.data
-        }));
-
-        obterEnderecosCliente(resposta.data.id);
-
-      } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          cliente: {},
-        }));
-      }
-
-    };
-
-    const obterEnderecosCliente = async (clienteId) => {
-      if (!clienteId) {
-        return;
-      }
-
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: true,
-      }));
-
-      try {
-        const { data: enderecos } = await apiQuickCup.get(
-          `/endereco/cliente/${clienteId}`
-        );
-
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          enderecos: enderecos,
-        }));
-      } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          enderecos: [],
-        }));
-      }
-
-    };
-
-    const adicionarEndereco = async (endereco) => {
-      if (!endereco) {
-        return;
-      }
-
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: true,
-      }));
-
-      try {
-        const {data : endereco} = await apiQuickCup.post("/endereco", endereco);
-
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          enderecos: [...prevState.enderecos, endereco],
-        }));
-      } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-        }));
-      }
-
-    };
-
-    const atualizarEndereco = async (enderecoId, endereco) => {
-      if (!enderecoId || !endereco) {
-        return;
-      }
-
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: true,
-      }));
-
-      try {
-        const { data: endereco } = await apiQuickCup.put(
-          `/endereco/${enderecoId}`,
-          endereco
-        );
-
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          enderecos: prevState.enderecos.map((enderecoExistente) => {
-            if (enderecoExistente.id === enderecoId) {
-              return endereco;
-            }
-            return enderecoExistente;
-          }),
-        }));
-      } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-        }));
-      }
-
-    };
-
-    const removerEndereco = async (enderecoId) => {
-      if (!enderecoId) {
-        return;
-      } 
-
-      setQuickcupState((prevState) => ({
-        ...prevState,
-        loading: true,        
-      }));
-
-      try {        
-        await apiQuickCup.delete(`/endereco/${enderecoId}`);
-
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-          enderecos: prevState.enderecos.filter(
-            (enderecoExistente) => enderecoExistente.id !== enderecoId
-          ),
-        }));
-      } catch (error) {
-        console.error(error);
-        setQuickcupState((prevState) => ({
-          ...prevState,
-          loading: false,
-        }));
-      }
-
     };
 
     const contextValue = {
-      quickcupState,
+      quickCupState,
       getQuickCupBasico: () => getQuickCupBasico(),
-      enviarCliente: useCallback((cliente) => enviarCliente(cliente), []),
-      obterEnderecosCliente: useCallback(
-        (clienteId) => obterEnderecosCliente(clienteId),
-        []
-      ),
-      adicionarEndereco: useCallback(
-        (endereco) => adicionarEndereco(endereco),
-        []
-      ),
-      atualizarEndereco: useCallback(
-        (enderecoId, endereco) => atualizarEndereco(enderecoId, endereco),
-        []
-      ),
-      removerEndereco: useCallback(
-        (enderecoId) => removerEndereco(enderecoId),
+      updateLoading: useCallback(
+        (loading) => updateLoading(loading),
         []
       ),
     };

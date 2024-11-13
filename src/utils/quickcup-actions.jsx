@@ -1,3 +1,4 @@
-export const ADICIONA_ITEM = "adiciona_item";
-export const ATUALIZA_QUANTIDADE = "atualiza_quantidade";
-export const EXCLUIR_ITEM = "excluir_item";
+export const GET_EMPRESA = "get_empresa";
+export const GET_GRUPOS = "get_grupos";
+export const GET_PRODUTOS = "get_produtos";
+export const LOADING = "loading";

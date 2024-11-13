@@ -1,30 +1,10 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import useQuickCup from "../hooks/quickcup-hooks";
+import React from "react";
 import logo from "../assets/img/quickcup-logo.png";
 import FuncionamentosEspeciais from "../components/Fechado/FuncionamentosEspeciais";
 import FuncionamentoSemanal from "../components/Fechado/FuncionamentoSemanal";
 
-const Fechado = () => {
-  const {
-    quickcupState,
-    getQuickCupBasico,
-  } = useQuickCup();
-
-  useEffect(() => {
-    getQuickCupBasico();
-  }, []); 
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (
-      Object.keys(quickcupState.empresa).length > 0 &&
-      quickcupState.empresa.aberto
-    ) {
-      navigate("/");
-    }
-  }, [quickcupState.empresa]);
+const Fechado = (props) => {
+  const { empresa } = props;
 
   return (
     <div className="container">
@@ -39,42 +19,42 @@ const Fechado = () => {
                       <h2 className="fw-bold text-center text-white mb-3">
                         A EMPRESA não está aberta no momento
                       </h2>
-                      {Object.keys(quickcupState.empresa).length > 0 &&
-                        quickcupState.empresa.funcionamentoSemanal.length >
+                      {Object.keys(empresa).length > 0 &&
+                        empresa.funcionamentoSemanal.length >
                           0 && (
                           <FuncionamentoSemanal
                             funcionamentoSemanal={
-                              quickcupState.empresa.funcionamentoSemanal
+                              empresa.funcionamentoSemanal
                             }
                           />
                         )}
-                      {Object.keys(quickcupState.empresa).length > 0 &&
-                        quickcupState.empresa.funcionamentosEspeciais.length >
+                      {Object.keys(empresa).length > 0 &&
+                        empresa.funcionamentosEspeciais.length >
                           0 && (
                           <FuncionamentosEspeciais
                             funcionamentosEspeciais={
-                              quickcupState.empresa.funcionamentosEspeciais
+                              empresa.funcionamentosEspeciais
                             }
                           />
                         )}
                       <div className="my-3">
                         <p className="mb-4">
-                          Telefone: {quickcupState.empresa.telefone}.
+                          Telefone: {empresa.telefone}.
                         </p>
                         <p className="mb-4">
-                          E-mail: {quickcupState.empresa.email}
+                          E-mail: {empresa.email}
                         </p>
                         <p className="mb-4">
-                          Endereço: {quickcupState.empresa.logradouro},{" "}
-                          {quickcupState.empresa.numero}
-                          {quickcupState.empresa.complemento &&
-                            `- ${quickcupState.empresa.complemento}`}
-                          {quickcupState.empresa.bairro
-                            ? ` - ${quickcupState.empresa.bairro} - `
+                          Endereço: {empresa.logradouro},{" "}
+                          {empresa.numero}
+                          {empresa.complemento &&
+                            `- ${empresa.complemento}`}
+                          {empresa.bairro
+                            ? ` - ${empresa.bairro} - `
                             : " - "}
-                          {quickcupState.empresa.cidade}/
-                          {quickcupState.empresa.estado} - CEP:
-                          {quickcupState.empresa.cep}
+                          {empresa.cidade}/
+                          {empresa.estado} - CEP:
+                          {empresa.cep}
                         </p>
                       </div>
                     </div>

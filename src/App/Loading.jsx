@@ -29,7 +29,8 @@ const FullScreenGif = styled.div`
   width: 100%;
   height: 100%;
   background: url(${loadingGif}) no-repeat center center fixed;
-  background-size: cover;
+  background-color: #ffffff;
+  background-size: contain;
   z-index: 9999;
 `;
 
