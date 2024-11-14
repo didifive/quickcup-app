@@ -39,7 +39,7 @@ const Endereco = () => {
 
   const handleLogradouroChange = (event) => {
     setLogradouro(event.target.value);
-    erroLogradouro(null);
+    setErroLogradouro(null);
   };
 
   const handleNumeroChange = (event) => {
@@ -70,25 +70,27 @@ const Endereco = () => {
       envia = false;
     } 
 
-    const endereco = {
-      id: id,
-      clienteId: clienteState.cliente.id,
-      nome: nome,
-      logradouro: logradouro,
-      numero: numero,
-      complemento: complemento,
-      bairro: bairro,
-      cidade: "Orlândia",
-      estado: "SP",
-      longitude: 0,
-      latitude: 0,
-    }; 
-
     if(envia) {
+      const endereco = {
+        clienteId: clienteState.cliente.id,
+        nome: nome,
+        logradouro: logradouro,
+        numero: Number(numero),
+        complemento: complemento,
+        bairro: bairro,
+        cidade: "Orlândia",
+        estado: "SP",
+        cep: "14620000",
+        longitude: 0,
+        latitude: 0,
+      }; 
+
       if (id) {
-        atualizarEndereco(endereco.id, endereco);
-      }
+        atualizarEndereco(id, endereco);
+      } else {
         adicionarEndereco(endereco);
+      }
+
       navigate("/carrinho");
     }
   };
@@ -147,6 +149,31 @@ const Endereco = () => {
               value={complemento}
               onChange={handleComplementoChange}
               className="form-control"
+            />
+            <br />
+
+            <label>Cidade:</label>
+            <input
+              type="text"
+              value="Orlândia"
+              className="form-control"
+              disabled
+            />
+            <br />
+            <label>Estado:</label>
+            <input
+              type="text"
+              value="SP"
+              className="form-control"
+              disabled
+            />
+            <br />
+            <label>CEP:</label>
+            <input
+              type="text"
+              value="14.620-000"
+              className="form-control"
+              disabled
             />
             <br />
 

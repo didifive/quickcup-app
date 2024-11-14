@@ -1,8 +1,15 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import useCliente from "../../hooks/cliente-hooks";
 
 const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange, frete }) => {
+  const { removerEndereco } = useCliente();
+
   const navigate = useNavigate();
+
+  const adicionarEndereco = () => {
+    navigate("/endereco");
+  };
 
   const editarEndereco = (id) => {
     if (!id) {
@@ -10,6 +17,13 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
     }
     navigate("/endereco/"+id);
   };
+
+    const excluirEndereco = (id) => {
+      if (!id) {
+        return;
+      }
+      removerEndereco(id);
+    };
 
   const dentroLimiteEnderecos = enderecos.length < 4;
 
@@ -54,7 +68,7 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
         <button
           type="button"
           className="btn btn-link text-danger text-decoration-none"
-          onClick={() => excluirEndereco()}
+          onClick={() => excluirEndereco(endereco.id)}
         >
           Excluir
         </button>

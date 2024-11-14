@@ -47,9 +47,9 @@ function clienteReducer(state, action) {
       return {
         ...state,
         enderecos: state.enderecos.map((endereco) => {
-          if (endereco.id === action.payload.enderecoId) {
+          if (endereco.id === action.payload.id) {
             return {
-              ...action.payload.endereco,
+              ...action.payload,
             };
           }
           return endereco;
@@ -176,11 +176,11 @@ const ClienteProvider = ({ children }) => {
       updateLoading(true);
 
       try {
-        const {data : endereco} = await apiQuickCup.post("/endereco", endereco);
+        const {data : enderecoNovo} = await apiQuickCup.post("/endereco", endereco);
 
         dispatchCliente({
           type: ADICIONA_ENDERECO,
-          payload: endereco,
+          payload: enderecoNovo,
         });
       } catch (error) {
         throw new Error(error);
@@ -195,20 +195,19 @@ const ClienteProvider = ({ children }) => {
         return;
       }
 
+      console.log(endereco);
+      console.log(enderecoId);
       updateLoading(true);
 
       try {
-        const { data: endereco } = await apiQuickCup.put(
+        const { data : enderecoAtualizado } = await apiQuickCup.put(
           `/endereco/${enderecoId}`,
           endereco
         );
 
         dispatchCliente({
           type: ATUALIZA_ENDERECO,
-          payload: {
-            enderecoId,
-            endereco,
-          }
+          payload: enderecoAtualizado,
         });
       } catch (error) {
         throw new Error(error);
