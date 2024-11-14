@@ -67,6 +67,12 @@ function clienteReducer(state, action) {
     default: {
       throw Error("Unknown action: " + action.type);
     }
+    case ADICIONA_PEDIDO: {
+      return {
+        ...state,
+        pedidos: [...state.pedidos, action.payload],
+      };
+    }
   }
 };
 
@@ -242,6 +248,30 @@ const ClienteProvider = ({ children }) => {
 
       updateLoading(false);
 
+    };
+
+    const fazerNovoPedido = async (pedido) => {
+      if (!pedido || Object.keys(pedido) === 0) {
+        return;
+      }
+
+      updateLoading(true);
+
+      try {
+        const { data: enderecoNovo } = await apiQuickCup.post(
+          "/endereco",
+          endereco
+        );
+
+        dispatchCliente({
+          type: ADICIONA_ENDERECO,
+          payload: enderecoNovo,
+        });
+      } catch (error) {
+        throw new Error(error);
+      }
+
+      updateLoading(false);
     };
 
     const contextValue = {

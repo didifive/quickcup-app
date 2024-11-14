@@ -13,6 +13,17 @@ const Carrinho = () => {
 
   const [frete, setFrete] = useState(0);
   const [opcaoSelecionada, setOpcaoSelecionada] = useState("");
+  const [opcaoSelecionadaErro, setOpcaoSelecionadaErro] = useState(null);
+  const [metodoPagamento, setMetodoPagamento] = useState("DEFAULT");
+  const [metodoPagamentoErro, setMetodoPagamentoErro] =
+    useState(null);
+  const [observacao, setObservacao] = useState("");
+  const [valorParaPagar, setValorParaPagar] = useState(0);
+
+  const navigate = useNavigate();
+
+
+
   const handleFreteChange = (event) => {
     setOpcaoSelecionada(event.target.value);
     if (Number(event.target.value) === 0) {
@@ -22,7 +33,66 @@ const Carrinho = () => {
     setFrete(quickCupState.empresa.valorEntrega);
   };
   
-  const navigate = useNavigate();
+
+
+  const fazerPedido = () => {
+    if (opcaoSelecionada === "") {
+      setOpcaoSelecionadaErro("Selecione uma opção de entrega");
+      return;
+    }
+
+    if (metodoPagamento === "DEFAULT") {
+      setMetodoPagamentoErro("Selecione uma opção de pagamento");
+      return;
+    }
+
+    if (carrinhoState.itens.length === 0) {
+      alert("O carrinho esta vazio!");
+      return;
+    }
+
+    let enderecoEncontrado = {};
+    for (let i = 0; i < clienteState.enderecos.length; i++) {
+      if (clienteState.enderecos[i].id === Number(opcaoSelecionada)) {
+        enderecoEncontrado = clienteState.enderecos[i];
+        break;
+      }
+    }
+    const enderecoTratado =
+      opcaoSelecionada === "0"
+        ? ""
+        : `${enderecoEncontrado.logradouro}, ${enderecoEncontrado.numero}, ${enderecoEncontrado.complemento} - ${enderecoEncontrado.bairro}`;
+    const metodoPagamentoDinheiroETemValorParaPagar = metodoPagamento === "DINHEIRO" && valorParaPagar > 0;
+    const observacoesTratada = metodoPagamentoDinheiroETemValorParaPagar 
+                                ? "Troco para R$ " 
+                                    + valorParaPagar.toLocaleString("pt-BR", {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    }) 
+                                    + ". " 
+                                : "" 
+                                +  observacao;
+    const itensPedido = carrinhoState.itens.map((item) => ({
+      produtoId: item.produto.id,
+      quantidade: item.quantidade,
+      valorUnitarioOriginal: item.produto.valorOriginal,
+      valorUnitarioDesconto: item.produto.valorDesconto,
+    }));
+    console.log(clienteState);
+
+    console.log(itensPedido);
+    const pedido = {
+      clienteId: clienteState.cliente.id,
+      valorEntrega: frete,
+      retira: opcaoSelecionada === "0",
+      endereco: enderecoTratado,
+      formaPagamento: metodoPagamento,
+      observacoes: observacoesTratada,
+      itens: itensPedido,
+    };
+    console.log(pedido);
+
+  };
 
   const limparCarrinhoEDirecionaMenu = () => {
     limparCarrinho();
@@ -90,6 +160,9 @@ const Carrinho = () => {
                     padding: "20px 10px",
                   }}
                 >
+                  {opcaoSelecionadaErro && (
+                    <div className="text-danger">{opcaoSelecionadaErro}</div>
+                  )}
                   <OpcoesEntrega
                     empresa={quickCupState.empresa}
                     enderecos={clienteState.enderecos}
@@ -108,13 +181,62 @@ const Carrinho = () => {
                     padding: "20px 10px",
                   }}
                 >
-                  <p className="fw-bold text-center display-6">
+                  <p className="fw-bold text-center display-6 py-2">
                     Total do Pedido: R${" "}
-                    {(valorTotalProdutos + frete).toFixed(2).toLocaleString("pt-BR", {
+                    {(valorTotalProdutos + frete)
+                      .toFixed(2)
+                      .toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}
                   </p>
+                  <div className="form-group">
+                    <select
+                      className="form-control"
+                      value={metodoPagamento}
+                      onChange={(e) => setMetodoPagamento(e.target.value)}
+                    >
+                      <option value="DEFAULT">
+                        Escolha um método de pagamento:{" "}
+                      </option>
+                      <option value="DINHEIRO">Dinheiro</option>
+                      <option value="CARTAO_CREDITO">Cartão de Crédito</option>
+                      <option value="CARTAO_DEBITO">Cartão de Débito</option>
+                      <option value="PIX">Pix</option>
+                    </select>
+                    {metodoPagamentoErro && (
+                      <div className="text-danger">{metodoPagamentoErro}</div>
+                    )}
+                    {metodoPagamento === "DINHEIRO" && (
+                      <div className="form-group mt-2">
+                        <label>
+                          Quantos reais vai usar para pagar em dinheiro?
+                        </label>
+                        <small> Ex: 100, 200, etc.</small>
+                        <div className="input-group">
+                          <span className="input-group-text">R$</span>
+                          <input
+                            type="number"
+                            min={0}
+                            step={0.01}
+                            className="form-control"
+                            value={valorParaPagar}
+                            onChange={(e) => setValorParaPagar(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-group mt-2">
+                    <label>Observação para o pedido:</label>
+                    <textarea
+                      className="form-control"
+                      value={observacao}
+                      placeholder="Deixe sua observação ou recado aqui."
+                      onChange={(e) => setObservacao(e.target.value)}
+                      rows="3"
+                    ></textarea>
+                  </div>
                   <button
                     type="button"
                     className="btn btn-primary my-3"
