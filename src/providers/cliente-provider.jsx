@@ -201,8 +201,6 @@ const ClienteProvider = ({ children }) => {
         return;
       }
 
-      console.log(endereco);
-      console.log(enderecoId);
       updateLoading(true);
 
       try {
@@ -255,17 +253,18 @@ const ClienteProvider = ({ children }) => {
         return;
       }
 
+      if (pedido.itens.length === 0) {
+        return;
+      }
+
       updateLoading(true);
 
       try {
-        const { data: enderecoNovo } = await apiQuickCup.post(
-          "/endereco",
-          endereco
-        );
+        const { data: pedidoNovo } = await apiQuickCup.post("/pedido", pedido);
 
         dispatchCliente({
-          type: ADICIONA_ENDERECO,
-          payload: enderecoNovo,
+          type: ADICIONA_PEDIDO,
+          payload: pedidoNovo,
         });
       } catch (error) {
         throw new Error(error);
@@ -290,6 +289,10 @@ const ClienteProvider = ({ children }) => {
       ),
       removerEndereco: useCallback(
         (enderecoId) => removerEndereco(enderecoId),
+        []
+      ),
+      fazerNovoPedido: useCallback(
+        (pedido) => fazerNovoPedido(pedido),
         []
       ),
     };

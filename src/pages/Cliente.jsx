@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useCliente from "../hooks/cliente-hooks";
 import InputTelefone from "../components/Cliente/InputTelefone";
 
 const Cliente = () => {
   const { clienteState, sendAndGetCliente } = useCliente();
+
+  const { from } = useParams();
 
   const navigate = useNavigate();
 
@@ -52,6 +54,9 @@ const Cliente = () => {
         nome: nome,
         telefone: telefoneSemMascara,
       });
+      if (from === "from-pedidos") {
+        navigate("/pedido");
+      }
       navigate("/carrinho");
     }
   };

@@ -8,7 +8,7 @@ import OpcoesEntrega from "../components/Carrinho/OpcoesEntrega";
 
 const Carrinho = () => {
   const { quickCupState } = useQuickCup();
-  const { clienteState } = useCliente();
+  const { clienteState, fazerNovoPedido } = useCliente();
   const { carrinhoState, limparCarrinho } = useCarrinho();
 
   const [frete, setFrete] = useState(0);
@@ -21,6 +21,9 @@ const Carrinho = () => {
   const [valorParaPagar, setValorParaPagar] = useState(0);
 
   const navigate = useNavigate();
+
+  const SELECIONE_OPCAO_ENTREGA_MESSAGE = "Selecione uma opção de entrega";
+  const SELECIONE_OPCAO_PAGAMENTO_MESSAGE = "Selecione uma opção de pagamento";
 
 
 
@@ -36,62 +39,59 @@ const Carrinho = () => {
 
 
   const fazerPedido = () => {
-    if (opcaoSelecionada === "") {
-      setOpcaoSelecionadaErro("Selecione uma opção de entrega");
+    if (!opcaoSelecionada) {
+      setOpcaoSelecionadaErro(SELECIONE_OPCAO_ENTREGA_MESSAGE);
+      alert(SELECIONE_OPCAO_ENTREGA_MESSAGE);
       return;
     }
 
     if (metodoPagamento === "DEFAULT") {
-      setMetodoPagamentoErro("Selecione uma opção de pagamento");
+      setMetodoPagamentoErro(SELECIONE_OPCAO_PAGAMENTO_MESSAGE);
+      alert(SELECIONE_OPCAO_PAGAMENTO_MESSAGE);
       return;
     }
 
-    if (carrinhoState.itens.length === 0) {
-      alert("O carrinho esta vazio!");
+    if (!carrinhoState.itens.length) {
+      alert("O carrinho está vazio!");
       return;
     }
 
-    let enderecoEncontrado = {};
-    for (let i = 0; i < clienteState.enderecos.length; i++) {
-      if (clienteState.enderecos[i].id === Number(opcaoSelecionada)) {
-        enderecoEncontrado = clienteState.enderecos[i];
-        break;
-      }
-    }
-    const enderecoTratado =
+    const enderecoSelecionado = clienteState.enderecos.find(
+      (endereco) => endereco.id === Number(opcaoSelecionada)
+    );
+
+    const enderecoFormatado =
       opcaoSelecionada === "0"
         ? ""
-        : `${enderecoEncontrado.logradouro}, ${enderecoEncontrado.numero}, ${enderecoEncontrado.complemento} - ${enderecoEncontrado.bairro}`;
-    const metodoPagamentoDinheiroETemValorParaPagar = metodoPagamento === "DINHEIRO" && valorParaPagar > 0;
-    const observacoesTratada = metodoPagamentoDinheiroETemValorParaPagar 
-                                ? "Troco para R$ " 
-                                    + valorParaPagar.toLocaleString("pt-BR", {
-                                      style: "currency",
-                                      currency: "BRL",
-                                    }) 
-                                    + ". " 
-                                : "" 
-                                +  observacao;
-    const itensPedido = carrinhoState.itens.map((item) => ({
+        : `${enderecoSelecionado.logradouro}, ${enderecoSelecionado.numero}, ${enderecoSelecionado.complemento} - ${enderecoSelecionado.bairro}`;
+
+    const isPagamentoDinheiroEValorParaPagar = metodoPagamento === "DINHEIRO" && valorParaPagar > 0;
+    const observacoesFormatadas = isPagamentoDinheiroEValorParaPagar
+      ? `Troco para ${valorParaPagar.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })}. ${observacao}`
+      : observacao;
+
+    const itensDoPedido = carrinhoState.itens.map((item) => ({
       produtoId: item.produto.id,
       quantidade: item.quantidade,
       valorUnitarioOriginal: item.produto.valorOriginal,
       valorUnitarioDesconto: item.produto.valorDesconto,
     }));
-    console.log(clienteState);
 
-    console.log(itensPedido);
     const pedido = {
       clienteId: clienteState.cliente.id,
       valorEntrega: frete,
       retira: opcaoSelecionada === "0",
-      endereco: enderecoTratado,
+      endereco: enderecoFormatado,
       formaPagamento: metodoPagamento,
-      observacoes: observacoesTratada,
-      itens: itensPedido,
+      observacoes: observacoesFormatadas,
+      itens: itensDoPedido,
     };
-    console.log(pedido);
 
+    fazerNovoPedido(pedido);
+    limparCarrinhoEDirecionaMenu();
   };
 
   const limparCarrinhoEDirecionaMenu = () => {
@@ -146,7 +146,7 @@ const Carrinho = () => {
             )}
             {!temCliente ? (
               <Link to="/cliente" className="btn btn-primary my-3">
-                Informar nome e telefone e continuar
+                Informar nome e telefone para continuar
               </Link>
             ) : (
               <>

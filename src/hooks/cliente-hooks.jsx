@@ -8,6 +8,7 @@ const useCliente = () => {
     adicionarEndereco,
     atualizarEndereco,
     removerEndereco,
+    fazerNovoPedido,
   } = useContext(ClienteContext);
 
   return {
@@ -16,6 +17,7 @@ const useCliente = () => {
     adicionarEndereco,
     atualizarEndereco,
     removerEndereco,
+    fazerNovoPedido,
   };
 };
 

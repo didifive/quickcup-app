@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import useQuickCup from "../hooks/quickcup-hooks";
 
@@ -10,6 +10,7 @@ import Layout from "../pages/Layout";
 import Cliente from "../pages/Cliente";
 import { AVISO_FACULDADE } from "../utils/storage-names";
 import Endereco from "../pages/Endereco";
+import ListaPedidos from "../pages/ListaPedidos";
 
 const App = () => {
   
@@ -47,8 +48,9 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Menu />} />
           <Route path="carrinho" element={<Carrinho />} />
-          <Route path="cliente" element={<Cliente />} />
-          <Route path="/endereco/:id?" element={<Endereco />} />
+          <Route path="cliente/:from?" element={<Cliente />} />
+          <Route path="endereco/:id?" element={<Endereco />} />
+          <Route path="pedido" element={<ListaPedidos />} />
         </Route>
         <Route
           path="fechado"
