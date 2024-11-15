@@ -5,9 +5,10 @@ import {
   GET_CLIENTE,
   GET_ENDERECOS,
   GET_PEDIDOS,
-  ADICIONA_ENDERECO, 
-  ATUALIZA_ENDERECO, 
+  ADICIONA_ENDERECO,
+  ATUALIZA_ENDERECO,
   EXCLUI_ENDERECO,
+  ADICIONA_PEDIDO,
 } from "../utils/cliente-actions";
 import { SESSION_STORAGE_CLIENTE } from "../utils/storage-names";
 
