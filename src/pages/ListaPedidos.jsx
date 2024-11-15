@@ -62,7 +62,7 @@ const ListaPedidos = () => {
     <>
       <div className="container mb-5 py-3 py-xl-0">
         <div className="row">
-          <div className="col-md-8 col-xl-7 mx-auto d-flex flex-column">
+          <div className="mx-auto d-flex flex-column">
             <p className="display-6">Pedidos</p>
             <p className="fs-2 fw-light">
               Olá <span className="fw-bold">{clienteState.cliente.nome}</span>,
@@ -87,6 +87,10 @@ const ListaPedidos = () => {
                         padding: "20px 10px",
                       }}
                     >
+                      <Link
+                        to={`/pedido/${pedido.id}`}  
+                        style={{ textDecoration: "none" }}
+                      >
                       <div className="row">
                         <div className="col d-flex flex-column">
                           <div className="d-flex">
@@ -145,6 +149,7 @@ const ListaPedidos = () => {
                           </p>
                         </div>
                       </div>
+                      </Link>
                     </div>
                     <hr />
                   </>

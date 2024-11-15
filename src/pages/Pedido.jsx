@@ -1,16 +1,8 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useCliente from "../hooks/cliente-hooks";
-import useQuickCup from "../hooks/quickcup-hooks";
-
-const statusPedidoMap = {
-  NOVO: { label: "Novo", color: "bg-primary" },
-  CONFIRMADO: { label: "Confirmado", color: "bg-success" },
-  CANCELADO: { label: "Cancelado", color: "bg-danger" },
-  EM_PREPARO: { label: "Em preparo", color: "bg-warning" },
-  EM_ENTREGA: { label: "Em entrega", color: "bg-info" },
-  FINALIZADO: { label: "Finalizado", color: "bg-secondary" },
-};
+import PedidoStatus from "../components/Pedido/PedidoStatus";
+import PedidoProdutos from "../components/Pedido/PedidoProdutos";
 
 const formaPagamentoMap = {
   DINHEIRO: "Dinheiro",
@@ -33,14 +25,15 @@ const formataData = (date) => {
 };
 
 const ListaPedidos = () => {
-  const { clienteState } = useCliente();
-  const { quickCupState } = useQuickCup();
+  const { clienteState, atualizarPedidos } = useCliente();
 
-  const produtosTexto = (pedido) => pedido.itens.map((item) => {
-    const produto = quickCupState.produtos.find((p) => p.id === item.produtoId);
-    return `${item.quantidade}x ${produto.nome}`;
-  });
-  const produtosTextoFinal = (pedido) => produtosTexto(pedido).join("; ");
+  const { id } = useParams();
+
+  useEffect(() => {
+    atualizarPedidos();
+  }, []);
+
+  const pedido = clienteState.pedidos.find((p) => p.id === Number(id));
 
   const valorDosItens = (pedido) => pedido.itens.reduce((total, item) => {
     return (
@@ -51,105 +44,107 @@ const ListaPedidos = () => {
   }, 0);
 
   return (
-    <>
-      <div className="container mb-5 py-3 py-xl-0">
-        <div className="row">
-          <div className="col-md-8 col-xl-7 mx-auto d-flex flex-column">
-            <p className="display-6">Pedidos</p>
-            <p className="fs-2 fw-light">
-              Olá <span className="fw-bold">{clienteState.cliente.nome}</span>,
-              bem-vindo, abaixo está o seu histórico de pedidos. &nbsp;
-              <Link to="/cliente/from-pedidos" className="fs-4">
-                Não sou eu.
-              </Link>
-            </p>
-            {!clienteState.pedidos.length && (
-              <p className="fs-4 fw-light">Nenhum pedido encontrado.</p>
-            )}
-            {clienteState.pedidos.length > 0 && (
-              <>
-                {clienteState.pedidos.map((pedido, index) => (
-                  <>
-                    <div
-                      key={index}
-                      style={{
-                        border: "1px solid #ccc",
-                        borderRadius: "15px",
-                        margin: "0",
-                        padding: "20px 10px",
-                      }}
-                    >
-                      <div className="row">
-                        <div className="col d-flex flex-column">
-                          <div className="d-flex">
-                            <h3 className="fs-4">Pedido #{pedido.id}</h3>
-                            <p className="ms-3 fw-light text-muted text-truncate">
-                              Feito em: {formataData(pedido.dataHoraPedido)}
-                            </p>
-                          </div>
+    <div className="container mb-5 py-3 py-xl-0">
+      <div className="row">
+        <div className="col col mx-auto d-flex flex-column">
+          {!pedido && (
+            <p className="fs-4 fw-light">Nenhum pedido encontrado.</p>
+          )}
+          {pedido && (
+            <>
+              <p className="display-6">Pedido #{pedido.id}</p>
+              <p className="fs-2 fw-light">
+                Olá <span className="fw-bold">{clienteState.cliente.nome}</span>
+                , bem-vindo, abaixo está o detalhe do seu pedido. &nbsp;
+                <Link to="/cliente/from-pedidos" className="fs-4">
+                  Não sou eu.
+                </Link>
+              </p>
+              <p className="fw-light text-muted text-truncate">
+                Pedido feito em: {formataData(pedido.dataHoraPedido)}
+              </p>
+              <PedidoStatus pedido={pedido} />
+              <hr />
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "15px",
+                  margin: "0",
+                  padding: "20px 10px",
+                }}
+              >
+                <PedidoProdutos itens={pedido.itens} />
+                <p className="fs-4">
+                  Total itens:{" "}
+                  {valorDosItens(pedido).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </p>
+              </div>
+              <hr />
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "15px",
+                  margin: "0",
+                  padding: "20px 10px",
+                }}
+              >
+                {pedido.retira ? (
+                  <p className="fs-4">
+                    Pedido com opção para <strong>retirada na loja</strong>.
+                  </p>
+                ) : (
+                  <p className="fs-4">
+                    Entrega para: <strong>{pedido.endereco}</strong> <br />
+                    Valor da entrega:{" "}
+                    <strong>
+                      {pedido.valorEntrega.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </strong>
+                  </p>
+                )}
+              </div>
+              <hr />
+              <div
+                style={{
+                  border: "1px solid #ccc",
+                  borderRadius: "15px",
+                  margin: "0",
+                  padding: "20px 10px",
+                }}
+              >
+                <p className="fs-4">
+                  Total do Pedido:{" "}
+                  <strong>
+                    {(
+                      valorDosItens(pedido) + pedido.valorEntrega
+                    ).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </strong>
+                </p>
 
-                          <span
-                            className={`badge ${
-                              statusPedidoMap[pedido.status].color
-                            } mx-1`}
-                          >
-                            {statusPedidoMap[pedido.status].label ||
-                              pedido.status}
-                          </span>
-                          <p className="fw-light text-muted text-truncate mb-1">
-                            Total itens:{" "}
-                            {valorDosItens(pedido).toLocaleString("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
-                            })}
-                            {" - "}
-                            {produtosTextoFinal(pedido)}
-                          </p>
-                          {pedido.retira ? (
-                            <p className="fw-light text-muted text-truncate mb-1">
-                              Para retirar.
-                            </p>
-                          ) : (
-                            <p className="fw-light text-muted text-truncate mb-1">
-                              Entrega:{" "}
-                              {pedido.valorEntrega.toLocaleString("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              })}{" "}
-                              - para: {pedido.endereco}
-                            </p>
-                          )}
-                          <p className="mb-1">
-                            Total do Pedido:
-                            {(
-                              valorDosItens(pedido) + pedido.valorEntrega
-                            ).toLocaleString("pt-BR", {
-                              style: "currency",
-                              currency: "BRL",
-                            })}
-                          </p>
-                          <p className="fw-light text-muted text-truncate mb-1">
-                            Forma de Pagamento:{" "}
-                            {formaPagamentoMap[pedido.formaPagamento]}
-                          </p>
-                          <p className="fw-light text-muted text-truncate mb-1">
-                            Observações: {pedido.observacoes}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <hr />
-                  </>
-                ))}
-              </>
-            )}
-            <Link to="/" className="btn btn-secondary my-3">
-              Voltar para o Menu
-            </Link>
-          </div>
+                <p className="fs-4">
+                  Forma de Pagamento:{" "}
+                  <strong>{formaPagamentoMap[pedido.formaPagamento]}</strong>
+                </p>
+                <p className="fs-4">
+                  Observações: <strong>{pedido.observacoes}</strong>
+                </p>
+              </div>
+            </>
+          )}
+          <Link to="/" className="btn btn-secondary my-3">
+            Voltar para o Menu
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

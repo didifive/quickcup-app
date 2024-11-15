@@ -9,6 +9,7 @@ import {
   ATUALIZA_ENDERECO,
   EXCLUI_ENDERECO,
   ADICIONA_PEDIDO,
+  ATUALIZA_PEDIDOS
 } from "../utils/cliente-actions";
 import { SESSION_STORAGE_CLIENTE } from "../utils/storage-names";
 
@@ -65,14 +66,20 @@ function clienteReducer(state, action) {
         ),
       };
     }
-    default: {
-      throw Error("Unknown action: " + action.type);
-    }
     case ADICIONA_PEDIDO: {
       return {
         ...state,
         pedidos: [...state.pedidos, action.payload],
       };
+    }
+    case ATUALIZA_PEDIDOS: {
+      return {
+        ...state,
+        pedidos: action.payload,
+      };
+    }
+    default: {
+      throw Error("Unknown action: " + action.type);
     }
   }
 };
@@ -274,6 +281,14 @@ const ClienteProvider = ({ children }) => {
       updateLoading(false);
     };
 
+    const atualizarPedidos = () => {
+      updateLoading(true);
+
+      obterPedidos(clienteRef.current.id);
+
+      updateLoading(false);
+    };
+
     const contextValue = {
       clienteState,
       sendAndGetCliente: useCallback(
@@ -292,10 +307,8 @@ const ClienteProvider = ({ children }) => {
         (enderecoId) => removerEndereco(enderecoId),
         []
       ),
-      fazerNovoPedido: useCallback(
-        (pedido) => fazerNovoPedido(pedido),
-        []
-      ),
+      fazerNovoPedido: useCallback((pedido) => fazerNovoPedido(pedido), []),
+      atualizarPedidos: useCallback(() => atualizarPedidos(), []),
     };
 
     return (
