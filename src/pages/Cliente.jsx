@@ -97,9 +97,21 @@ const Cliente = () => {
             >
               Enviar
             </button>
-            <Link to="/carrinho" className="btn btn-secondary my-3">
-              Voltar para o Carrinho
-            </Link>
+            {
+              !from ||
+                (from === "from-carrinho" && (
+                  <Link to="/carrinho" className="btn btn-secondary my-3">
+                    Voltar para o Carrinho
+                  </Link>
+                ))
+            }
+            {
+              from === "from-pedidos" && (
+                <Link to="/" className="btn btn-secondary my-3">
+                  Ir para o Menu
+                </Link>
+              )
+            }
           </div>
         </div>
       </div>

@@ -36,14 +36,6 @@ const ListaPedidos = () => {
   const { clienteState } = useCliente();
   const { quickCupState } = useQuickCup();
 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-      if (!Object.keys(clienteState.cliente).length) {
-        navigate("/cliente/from-pedidos");
-      }
-  }, [clienteState.cliente, navigate]);
-
   const produtosTexto = (pedido) => pedido.itens.map((item) => {
     const produto = quickCupState.produtos.find((p) => p.id === item.produtoId);
     return `${item.quantidade}x ${produto.nome}`;
