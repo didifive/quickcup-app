@@ -283,8 +283,8 @@ const ClienteProvider = ({ children }) => {
 
     const atualizarPedidos = () => {
       updateLoading(true);
-
-      obterPedidos(clienteRef.current.id);
+      
+      obterPedidos(clienteRef.current.cliente.id);
 
       updateLoading(false);
     };

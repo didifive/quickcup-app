@@ -33,10 +33,20 @@ const formataData = (date) => {
 };
 
 const ListaPedidos = () => {
-  const { clienteState } = useCliente();
+  const { clienteState, atualizarPedidos } = useCliente();
   const { quickCupState } = useQuickCup();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      atualizarPedidos();
+    }, 30000); // executa atualizarPedidos a cada 30 segundos
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [atualizarPedidos]);
 
   useEffect(() => {
       if (!Object.keys(clienteState.cliente).length) {

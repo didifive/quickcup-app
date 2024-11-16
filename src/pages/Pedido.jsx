@@ -139,8 +139,11 @@ const ListaPedidos = () => {
               </div>
             </>
           )}
-          <Link to="/" className="btn btn-secondary my-3">
-            Voltar para o Menu
+          <Link to="/pedido" className="btn btn-secondary my-3">
+            Voltar para a Lista de Pedidos
+          </Link>
+          <Link to="/" className="btn btn-outline-secondary my-3">
+            Ir para o Menu
           </Link>
         </div>
       </div>

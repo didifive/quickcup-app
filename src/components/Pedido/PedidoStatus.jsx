@@ -11,7 +11,6 @@ const statusPedidoMap = {
 
 const PedidoStatus = ({ pedido }) => {
   const etapasPedido = [
-    { status: "NOVO", label: "Pedido Novo" },
     { status: "CONFIRMADO", label: "Pedido Confirmado" },
     { status: "EM_PREPARO", label: "Pedido Em Preparo" },
     { status: "EM_ENTREGA", label: "Pedido Para Entrega" },
@@ -28,7 +27,7 @@ const PedidoStatus = ({ pedido }) => {
     return <span>Pedido Cancelado</span>;
   } else {
     return (
-      <div>
+      <>
         {etapasPedido.map((etapa, index) => {
           const className =
             pedido.status === etapa.status
@@ -36,7 +35,7 @@ const PedidoStatus = ({ pedido }) => {
               : index <
                 etapasPedido.findIndex((e) => e.status === pedido.status)
               ? "badge bg-light text-dark"
-              : "";
+              : "badge text-dark text-muted fw-light";
 
           return (
             <span key={index} className={className}>
@@ -44,7 +43,7 @@ const PedidoStatus = ({ pedido }) => {
             </span>
           );
         })}
-      </div>
+      </>
     );
   }
 };
