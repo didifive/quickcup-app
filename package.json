@@ -15,9 +15,10 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "start": "webpack serve --mode development",
+    "start": "serve -s dist",
     "build": "webpack --mode production",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run build",
+    "dev": "webpack serve --mode development"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
