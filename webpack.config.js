@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const env = dotenv.config().parsed || {};
+
 const envKeys = Object.keys(env)
   .filter((key) => key.startsWith("REACT_APP"))
   .reduce((prev, next) => {
@@ -11,48 +12,42 @@ const envKeys = Object.keys(env)
     return prev;
   }, {});
 
-module.exports = (env, argv) => {
-  const isProduction = argv.mode === "production";
-
-  return {
-    entry: "./src/index.js",
-    output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: "bundle.js",
-      publicPath: "/",
-    },
-    module: {
-      rules: [
-        {
-          test: /\.(js|jsx)$/,
-          exclude: /node_modules/,
-          use: {
-            loader: "babel-loader",
+module.exports = {
+  entry: "./src/index.js",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
+    publicPath: "/",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+        },
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: "file-loader",
           },
-        },
-        {
-          test: /\.(png|jpe?g|gif)$/i,
-          use: [
-            {
-              loader: "file-loader",
-            },
-          ],
-        },
-      ],
-    },
-    resolve: {
-      extensions: [".js", ".jsx"],
-    },
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: "./public/index.html",
-      }),
-      new webpack.DefinePlugin(envKeys),
+        ],
+      },
     ],
-    devServer: {
-      historyApiFallback: true,
-      host: "0.0.0.0",
-      disableHostCheck: true,
-    },
-  };
+  },
+  resolve: {
+    extensions: [".js", ".jsx"],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+    }),
+    new webpack.DefinePlugin(envKeys),
+  ],
+  devServer: {
+    historyApiFallback: true,
+  },
 };
