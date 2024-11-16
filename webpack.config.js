@@ -49,10 +49,10 @@ module.exports = (env, argv) => {
       }),
       new webpack.DefinePlugin(envKeys),
     ],
-    devServer: isProduction
-      ? {}
-      : {
-          historyApiFallback: true,
-        },
+    devServer: {
+      historyApiFallback: true,
+      host: "0.0.0.0",
+      disableHostCheck: true,
+    },
   };
 };
