@@ -26,7 +26,7 @@ const App = () => {
 
       if (!avisoVisto) {
         alert(
-          'Este aplicativo foi criado exclusivamente para a entrega do trabalho semestral da faculdade UNIFRAN / Cruzeiro do Sul para o segundo semestre de 2024. Todo o conteúdo é fictício. No rodapé da página tem o link para o repositório do projeto no GitHub (Repo GitHub) com mais detalhes, visite ele para mais informações.'
+          'Este aplicativo foi criado através da oportunidade do desafio do trabalho semestral da faculdade UNIFRAN / Cruzeiro do Sul, Projeto Integrador Transdisciplinar, do segundo semestre de 2024. Todo o conteúdo é fictício. No rodapé da página tem o link para o repositório do projeto no GitHub (Repo GitHub) com mais detalhes, visite ele para mais informações.'
         );
         sessionStorage.setItem(AVISO_FACULDADE, true);
       }
