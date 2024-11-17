@@ -307,8 +307,14 @@ const ClienteProvider = ({ children }) => {
         (enderecoId) => removerEndereco(enderecoId),
         []
       ),
-      fazerNovoPedido: useCallback((pedido) => fazerNovoPedido(pedido), []),
-      atualizarPedidos: useCallback(() => atualizarPedidos(), []),
+      fazerNovoPedido: useCallback(
+        (pedido) => fazerNovoPedido(pedido),
+        []
+      ),
+      atualizarPedidos: useCallback(
+        () => atualizarPedidos(),
+        []
+      ),
     };
 
     return (

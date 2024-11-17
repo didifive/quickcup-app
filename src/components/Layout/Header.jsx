@@ -12,8 +12,6 @@ const Header = () => {
     (total, item) => total + item.quantidade,
     0
   );
-
-  const temPedido = clienteState.pedidos.length > 0;
   
   const quantidadePedidosNaoFinalizados = clienteState.pedidos.reduce(
     (total, pedido) =>
@@ -29,13 +27,13 @@ const Header = () => {
       data-bs-theme="dark"
     >
       <div className="container">
-        <a className="navbar-brand d-flex" href="#">
+        <button className="navbar-brand d-flex" href="#">
           <img
             src={logo}
             alt="QuickCup"
             style={{ height: "55px", width: "55px" }}
           />
-        </a>
+        </button>
         <ul className="navbar-nav d-flex float-end flex-row justify-content-between justify-content-md-around justify-content-lg-evenly w-75">
           <li>
             <Link

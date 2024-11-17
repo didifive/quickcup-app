@@ -138,7 +138,7 @@ const QuickCupProvider = ({ children }) => {
 
     const contextValue = {
       quickCupState,
-      getQuickCupBasico: () => getQuickCupBasico(),
+      getQuickCupBasico: useCallback(() => getQuickCupBasico(), []),
       updateLoading: useCallback(
         (loading) => updateLoading(loading),
         []

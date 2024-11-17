@@ -15,6 +15,7 @@ const Footer = () => {
                 <a
                   className="link-secondary"
                   target="_blank"
+                  rel="noreferrer"
                   href="https://zancanela.dev.br/"
                 >
                   zancanela.dev
@@ -24,6 +25,7 @@ const Footer = () => {
                 <a
                   className="link-secondary"
                   target="_blank"
+                  rel="noreferrer"
                   href="https://github.com/didifive/quickcup-app"
                 >
                   Repo GitHub

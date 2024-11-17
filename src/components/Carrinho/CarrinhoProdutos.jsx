@@ -65,7 +65,7 @@ const CarrinhoProdutos = ({ itens }) => {
                       >
                         +
                       </button>
-                      <a
+                      <button
                         href="#"
                         type="button"
                         className="btn btn-sm btn-link ms-3 text-danger text-decoration-none"
@@ -74,7 +74,7 @@ const CarrinhoProdutos = ({ itens }) => {
                         }}
                       >
                         Excluir Item
-                      </a>
+                      </button>
                     </div>
                   </div>
                   <div className="w-100 d-flex flex-row align-items-end justify-content-end">

@@ -26,7 +26,7 @@ const App = () => {
 
       if (!avisoVisto) {
         alert(
-          "Este aplicativo foi criado exclusivamente para a entrega do trabalho semestral da faculdade UNIFRAN / Cruzeiro do Sul para o segundo semestre de 2024. Todo o conteúdo é fictício. No rodapé da página tem o link para o repositório do projeto no GitHub (Repo GitHub) com mais detalhes, visite ele para mais informações."
+          'Este aplicativo foi criado exclusivamente para a entrega do trabalho semestral da faculdade UNIFRAN / Cruzeiro do Sul para o segundo semestre de 2024. Todo o conteúdo é fictício. No rodapé da página tem o link para o repositório do projeto no GitHub (Repo GitHub) com mais detalhes, visite ele para mais informações.'
         );
         sessionStorage.setItem(AVISO_FACULDADE, true);
       }
@@ -36,11 +36,11 @@ const App = () => {
 
   useEffect(() => {
     if (!quickCupState.empresa.aberto) {
-      navigate("/fechado");
-    } else if (window.location.pathname === "/fechado") {
-      navigate("/");
+      navigate('/fechado');
+    } else if (window.location.pathname === '/fechado') {
+      navigate('/');
     }
-  }, [quickCupState]);
+  }, [quickCupState, navigate]);
 
   return (
     <>
