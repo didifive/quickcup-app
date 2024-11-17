@@ -30,7 +30,13 @@ const ListaPedidos = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    atualizarPedidos();
+    const intervalId = setInterval(() => {
+      atualizarPedidos();
+    }, 30000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [atualizarPedidos]);
 
   const pedido = clienteState.pedidos.find((p) => p.id === Number(id));
