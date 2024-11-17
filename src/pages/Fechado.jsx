@@ -63,7 +63,7 @@ const Fechado = (props) => {
                     className="col-md-6 order-first order-md-last d-flex justify-content-center align-items-center"
                     style={{ minHeight: "250px", backgroundColor: "#f7ead1" }}
                   >
-                    <img className="w-100" src={logo} />
+                    <img className="w-100" src={logo} alt="QuickCup" />
                   </div>
                 </div>
               </div>

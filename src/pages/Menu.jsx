@@ -7,7 +7,7 @@ const Menu = () => {
 
   useEffect(() => {
     getQuickCupBasico();
-  }, []);
+  }, [getQuickCupBasico]);
 
   return (
     <>

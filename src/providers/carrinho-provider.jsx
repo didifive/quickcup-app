@@ -71,58 +71,63 @@ const CarrinhoProvider = ({ children }) => {
       carrinhoRef.current = carrinhoState;
     }, [carrinhoState]);
 
-    const adicionaItem = (produto, quantidade) => {
-      if (!produto || !quantidade) {
-        return;
-      }
-
-      quantidade = parseInt(quantidade);
-      if (quantidade <= 0) {
-        return;      
-      }
-
-      let itemEncontrado = null;
-      for (let item of carrinhoRef.current.itens) {
-        if (item.produto.id === produto.id) {
-          itemEncontrado = item;
-          break;
+    const atualizaQuantidadeItem = useCallback(
+      (produtoId, novaQuantidade) => {
+        if (!produtoId || !novaQuantidade) {
+          return;
         }
-      }
-      if (itemEncontrado) {
-        const novaQuantidade = itemEncontrado.quantidade + quantidade;
-        atualizaQuantidadeItem(itemEncontrado.produto.id, novaQuantidade);
-        return;
-      }
 
-      dispatchCarrinho({
-        type: ADICIONA_ITEM,
-        payload: {
-            produto: produto, 
-            quantidade: quantidade,
+        novaQuantidade = parseInt(novaQuantidade);
+        if (novaQuantidade <= 0) {
+          excluirItem(produtoId);
+          return;
+        }
+
+        dispatchCarrinho({
+          type: ATUALIZA_QUANTIDADE,
+          payload: {
+            produtoId: produtoId,
+            quantidade: novaQuantidade,
+          },
+        });
+      },
+      []
+    );
+
+    const adicionaItem = useCallback(
+      (produto, quantidade) => {
+        if (!produto || !quantidade) {
+          return;
+        }
+
+        quantidade = parseInt(quantidade);
+        if (quantidade <= 0) {
+          return;
+        }
+
+        let itemEncontrado = null;
+        for (let item of carrinhoRef.current.itens) {
+          if (item.produto.id === produto.id) {
+            itemEncontrado = item;
+            break;
           }
-      });
+        }
+        if (itemEncontrado) {
+          const novaQuantidade = itemEncontrado.quantidade + quantidade;
+          atualizaQuantidadeItem(itemEncontrado.produto.id, novaQuantidade);
+          return;
+        }
 
-    };
-
-    const atualizaQuantidadeItem = (produtoId, novaQuantidade) => {
-      if (!produtoId || !novaQuantidade) {
-        return;
-      }
-
-      novaQuantidade = parseInt(novaQuantidade);
-      if (novaQuantidade <= 0) {
-        excluirItem(produtoId);
-        return;      
-      }
-
-      dispatchCarrinho({
-        type: ATUALIZA_QUANTIDADE,
-        payload: {
-          produtoId: produtoId,
-          quantidade: novaQuantidade,
-        },
-      });
-    };
+        dispatchCarrinho({
+          type: ADICIONA_ITEM,
+          payload: {
+            produto: produto,
+            quantidade: quantidade,
+          },
+        });
+      },
+      [atualizaQuantidadeItem]
+    );
 
     const excluirItem = (produtoId) => {
       if (!produtoId) {
@@ -147,12 +152,12 @@ const CarrinhoProvider = ({ children }) => {
       carrinhoState: carrinhoState,
       adicionaItem: useCallback(
         (produto, quantidade) => adicionaItem(produto, quantidade),
-        []
+        [adicionaItem]
       ),
       atualizaQuantidadeItem: useCallback(
         (produtoId, novaQuantidade) =>
           atualizaQuantidadeItem(produtoId, novaQuantidade),
-        []
+        [atualizaQuantidadeItem]
       ),
       excluirItem: useCallback((produtoId) => excluirItem(produtoId), []),
       limparCarrinho: useCallback(() => limparCarrinho(), []),

@@ -31,7 +31,7 @@ const ListaPedidos = () => {
 
   useEffect(() => {
     atualizarPedidos();
-  }, []);
+  }, [atualizarPedidos]);
 
   const pedido = clienteState.pedidos.find((p) => p.id === Number(id));
 

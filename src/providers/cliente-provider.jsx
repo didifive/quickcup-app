@@ -110,7 +110,7 @@ const ClienteProvider = ({ children }) => {
       clienteRef.current = clienteState;
     }, [clienteState]);
 
-    const sendAndGetCliente = async (cliente) => {
+    const sendAndGetCliente = useCallback(async (cliente) => {
       if (!cliente || !Object.keys(cliente).length || !cliente.telefone || !cliente.nome) {
         return;
       }
@@ -140,7 +140,7 @@ const ClienteProvider = ({ children }) => {
 
       updateLoading(false);
 
-    };
+    }, [updateLoading]);
 
     const obterEnderecos = async (clienteId) => {
       if (!clienteId) {
@@ -182,7 +182,7 @@ const ClienteProvider = ({ children }) => {
       }
     };
 
-    const adicionarEndereco = async (endereco) => {
+    const adicionarEndereco = useCallback(async (endereco) => {
       if (!endereco || Object.keys(endereco) === 0) {
         return;
       }
@@ -202,9 +202,9 @@ const ClienteProvider = ({ children }) => {
 
       updateLoading(false);
 
-    };
+    }, [updateLoading]);
 
-    const atualizarEndereco = async (enderecoId, endereco) => {
+    const atualizarEndereco = useCallback(async (enderecoId, endereco) => {
       if (!enderecoId || !endereco || Object.keys(endereco) === 0) {
         return;
       }
@@ -227,36 +227,37 @@ const ClienteProvider = ({ children }) => {
 
       updateLoading(false);
 
-    };
+    }, [updateLoading]);
 
-    const removerEndereco = async (enderecoId) => {
-      if (!enderecoId) {
-        return;
-      } 
-
-      updateLoading(true);
-
-      try {        
-        const resposta = await apiQuickCup.delete(`/endereco/${enderecoId}`);
-
-        if (resposta.status !== 204) {
+    const removerEndereco = useCallback(
+      async (enderecoId) => {
+        if (!enderecoId) {
           return;
         }
 
-        dispatchCliente({
-          type: EXCLUI_ENDERECO,
-          payload: enderecoId,
-        });
+        updateLoading(true);
 
-      } catch (error) {
-        throw new Error(error);
-      }
+        try {
+          const resposta = await apiQuickCup.delete(`/endereco/${enderecoId}`);
 
-      updateLoading(false);
+          if (resposta.status !== 204) {
+            return;
+          }
 
-    };
+          dispatchCliente({
+            type: EXCLUI_ENDERECO,
+            payload: enderecoId,
+          });
+        } catch (error) {
+          throw new Error(error);
+        }
 
-    const fazerNovoPedido = async (pedido) => {
+        updateLoading(false);
+      },
+      [updateLoading]
+    );
+
+    const fazerNovoPedido = useCallback(async (pedido) => {
       if (!pedido || Object.keys(pedido) === 0) {
         return;
       }
@@ -279,41 +280,41 @@ const ClienteProvider = ({ children }) => {
       }
 
       updateLoading(false);
-    };
+    }, [updateLoading]);
 
-    const atualizarPedidos = () => {
+    const atualizarPedidos = useCallback(() => {
       updateLoading(true);
       
       obterPedidos(clienteRef.current.cliente.id);
 
       updateLoading(false);
-    };
+    }, [updateLoading]);
 
     const contextValue = {
       clienteState,
       sendAndGetCliente: useCallback(
         (cliente) => sendAndGetCliente(cliente),
-        []
+        [sendAndGetCliente]
       ),
       adicionarEndereco: useCallback(
         (endereco) => adicionarEndereco(endereco),
-        []
+        [adicionarEndereco]
       ),
       atualizarEndereco: useCallback(
         (enderecoId, endereco) => atualizarEndereco(enderecoId, endereco),
-        []
+        [atualizarEndereco]
       ),
       removerEndereco: useCallback(
         (enderecoId) => removerEndereco(enderecoId),
-        []
+        [removerEndereco]
       ),
       fazerNovoPedido: useCallback(
         (pedido) => fazerNovoPedido(pedido),
-        []
+        [fazerNovoPedido]
       ),
       atualizarPedidos: useCallback(
         () => atualizarPedidos(),
-        []
+        [atualizarPedidos]
       ),
     };
 

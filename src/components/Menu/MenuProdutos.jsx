@@ -116,7 +116,7 @@ const MenuProdutos = ({ produtos }) => {
                     +
                   </button>
                 </div>
-                <a
+                <button
                   href="#"
                   type="button"
                   className="btn btn-primary flex-grow-1 flex-shrink-0 flex-fill mt-2"
@@ -128,7 +128,7 @@ const MenuProdutos = ({ produtos }) => {
                   }}
                 >
                   + Carrinho
-                </a>
+                </button>
               </div>
             </div>
           </div>
