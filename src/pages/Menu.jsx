@@ -11,7 +11,15 @@ const Menu = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand" style={{ overflowX: "auto" }}>
+      <div className="container py-3 py-xl-0">
+        <div className="row">
+          <div className="d-flex flex-column col-md-8 col-xl-7 mx-auto text-xs"></div>
+          <h3 className="mt-3 display-6">Menu</h3>
+          <p>Abaixo temos os produtos disponíveis para você fazer o seu pedido. Aproveite!</p>
+          <hr />
+        </div>
+      </div>  
+      <nav className="navbar navbar-expand" style={{ overflowX: 'auto' }}>
         <div className="container">
           <ul className="navbar-nav">
             {quickCupState.grupos &&
@@ -25,7 +33,7 @@ const Menu = () => {
           </ul>
         </div>
       </nav>
-      {quickCupState.grupos &&quickCupState.grupos.length > 0 && (
+      {quickCupState.grupos && quickCupState.grupos.length > 0 && (
         <MenuGrupos
           grupos={quickCupState.grupos}
           produtos={quickCupState.produtos}

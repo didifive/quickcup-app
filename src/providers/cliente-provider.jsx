@@ -69,7 +69,7 @@ function clienteReducer(state, action) {
     case ADICIONA_PEDIDO: {
       return {
         ...state,
-        pedidos: [...state.pedidos, action.payload],
+        pedidos: [action.payload, ...state.pedidos],
       };
     }
     case ATUALIZA_PEDIDOS: {
@@ -172,6 +172,8 @@ const ClienteProvider = ({ children }) => {
         const { data: pedidos } = await apiQuickCup.get(
           `/pedido/cliente/${clienteId}`
         );
+
+        pedidos.sort((a, b) => b.id - a.id);
 
         dispatchCliente({
           type: GET_PEDIDOS,

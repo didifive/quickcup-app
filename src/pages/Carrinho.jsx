@@ -61,9 +61,15 @@ const Carrinho = () => {
     );
 
     const enderecoFormatado =
-      opcaoSelecionada === "0"
-        ? ""
-        : `${enderecoSelecionado.logradouro}, ${enderecoSelecionado.numero}, ${enderecoSelecionado.complemento} - ${enderecoSelecionado.bairro}`;
+      opcaoSelecionada === '0'
+        ? ''
+        : `${enderecoSelecionado.logradouro}, ${enderecoSelecionado.numero}${
+            enderecoSelecionado.complemento
+              ? ' - ' + enderecoSelecionado.complemento
+              : ''
+          }${
+            enderecoSelecionado.bairro ? ' - ' + enderecoSelecionado.bairro : ''
+          }`;
 
     const isPagamentoDinheiroEValorParaPagar = metodoPagamento === "DINHEIRO" && valorParaPagar > 0;
     const observacoesFormatadas = isPagamentoDinheiroEValorParaPagar
@@ -91,7 +97,10 @@ const Carrinho = () => {
     };
 
     fazerNovoPedido(pedido);
-    limparCarrinhoEDirecionaMenu();
+
+    limparCarrinho();
+
+    navigate("/pedido");
   };
 
   const limparCarrinhoEDirecionaMenu = () => {
