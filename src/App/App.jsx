@@ -32,7 +32,7 @@ const App = () => {
       }
     };
     showAlert();
-  }, []); 
+  }, [getQuickCupBasico]); 
 
   useEffect(() => {
     if (!quickCupState.empresa.aberto) {

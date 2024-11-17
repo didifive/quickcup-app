@@ -78,7 +78,7 @@ const QuickCupProvider = ({ children }) => {
       });
     }
 
-    const getQuickCupBasico = async () => {
+    const getQuickCupBasico = useCallback(async () => {
 
       updateLoading(true);
 
@@ -88,7 +88,7 @@ const QuickCupProvider = ({ children }) => {
 
       updateLoading(false);
 
-    }
+    }, []);
 
     const obterEmpresa = async () => {
       try {
@@ -138,11 +138,11 @@ const QuickCupProvider = ({ children }) => {
 
     const contextValue = {
       quickCupState,
-      getQuickCupBasico: useCallback(() => getQuickCupBasico(), []),
-      updateLoading: useCallback(
-        (loading) => updateLoading(loading),
-        []
+      getQuickCupBasico: useCallback(
+        () => getQuickCupBasico(),
+        [getQuickCupBasico]
       ),
+      updateLoading: useCallback((loading) => updateLoading(loading), []),
     };
 
     return (
