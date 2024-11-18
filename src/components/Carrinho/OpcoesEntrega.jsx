@@ -32,27 +32,33 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
       key={index}
       className="my-2"
       style={{
-        border: "1px solid #ccc",
-        borderRadius: "10px",
-        margin: "0",
-        padding: "8px 8px",
+        border: '1px solid #ccc',
+        borderRadius: '10px',
+        margin: '0',
+        padding: '8px 8px',
+      }}
+      onClick={(e) => {
+        const radio = e.target.querySelector('input[type="radio"]');
+        if (radio) {
+          radio.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
       }}
     >
       <div className="form-check d-flex align-items-center">
         <input
           className="form-check-input me-2"
           type="radio"
-          id={`endereco-${index}`}
+          id={`endereco-${endereco.id}`}
           name="entrega"
           value={endereco.id}
-          checked={opcaoSelecionada === endereco.id}
+          checked={Number(opcaoSelecionada) === endereco.id}
           onChange={handleFreteChange}
         />
-        <label htmlFor={`endereco-${index}`}>
+        <label htmlFor={`endereco-${endereco.id}`}>
           <span className="fw-semibold">{endereco.nome}</span>
           <br />
           <span className="fw-light">
-            {endereco.logradouro}, {endereco.numero} {endereco.complemento} -{" "}
+            {endereco.logradouro}, {endereco.numero} {endereco.complemento} -{' '}
             {endereco.bairro}
           </span>
         </label>
@@ -61,14 +67,20 @@ const OpcoesEntrega = ({ empresa, enderecos, opcaoSelecionada, handleFreteChange
         <button
           type="button"
           className="btn btn-link text-decoration-none"
-          onClick={() => editarEndereco(endereco.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            editarEndereco(endereco.id);
+          }}
         >
           Editar
         </button>
         <button
           type="button"
           className="btn btn-link text-danger text-decoration-none"
-          onClick={() => excluirEndereco(endereco.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            excluirEndereco(endereco.id);
+          }}
         >
           Excluir
         </button>
