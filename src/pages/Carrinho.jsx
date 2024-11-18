@@ -96,11 +96,13 @@ const Carrinho = () => {
       itens: itensDoPedido,
     };
 
-    fazerNovoPedido(pedido);
+    alert(clienteState.cliente.pedidos);
 
-    limparCarrinho();
+    // fazerNovoPedido(pedido);
 
-    navigate("/pedido");
+    // limparCarrinho();
+
+    // navigate("/pedido");
   };
 
   const limparCarrinhoEDirecionaMenu = () => {
