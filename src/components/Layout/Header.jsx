@@ -22,7 +22,7 @@ const Header = () => {
   );
 
   return (
-    <nav
+    <nav id="header"
       className="navbar navbar-expand-md bg-dark py-3 mb-3"
       data-bs-theme="dark"
     >
