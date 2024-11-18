@@ -100,7 +100,7 @@ const Carrinho = () => {
 
     limparCarrinho();
 
-    navigate("/pedido");
+    navigate("/pedido#header");
   };
 
   const limparCarrinhoEDirecionaMenu = () => {
