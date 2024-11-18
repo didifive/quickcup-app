@@ -61,9 +61,15 @@ const Carrinho = () => {
     );
 
     const enderecoFormatado =
-      opcaoSelecionada === "0"
-        ? ""
-        : `${enderecoSelecionado.logradouro}, ${enderecoSelecionado.numero}, ${enderecoSelecionado.complemento} - ${enderecoSelecionado.bairro}`;
+      opcaoSelecionada === '0'
+        ? ''
+        : `${enderecoSelecionado.logradouro}, ${enderecoSelecionado.numero}${
+            enderecoSelecionado.complemento
+              ? ' - ' + enderecoSelecionado.complemento
+              : ''
+          }${
+            enderecoSelecionado.bairro ? ' - ' + enderecoSelecionado.bairro : ''
+          }`;
 
     const isPagamentoDinheiroEValorParaPagar = metodoPagamento === "DINHEIRO" && valorParaPagar > 0;
     const observacoesFormatadas = isPagamentoDinheiroEValorParaPagar
@@ -91,7 +97,10 @@ const Carrinho = () => {
     };
 
     fazerNovoPedido(pedido);
-    limparCarrinhoEDirecionaMenu();
+
+    limparCarrinho();
+
+    navigate("/pedido");
   };
 
   const limparCarrinhoEDirecionaMenu = () => {
@@ -115,7 +124,7 @@ const Carrinho = () => {
             {temCliente ? (
               <>
                 <p className="fs-2 fw-light">
-                  Olá{" "}
+                  Olá{' '}
                   <span className="fw-bold">{clienteState.cliente.nome}</span>,
                   bem-vindo, aqui está o seu carrinho. &nbsp;
                   <Link to="/cliente" className="fs-4">
@@ -134,10 +143,10 @@ const Carrinho = () => {
                 <p className="display-4">Itens:</p>
                 <div
                   style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "15px",
-                    margin: "0",
-                    padding: "20px 10px",
+                    border: '1px solid #ccc',
+                    borderRadius: '15px',
+                    margin: '0',
+                    padding: '20px 10px',
                   }}
                 >
                   <CarrinhoProdutos itens={carrinhoState.itens} />
@@ -152,12 +161,13 @@ const Carrinho = () => {
               <>
                 <hr />
                 <p className="display-4">Entrega:</p>
+                <p>Adicione ou selecione um endereço abaixo ou escolha a opção para retirada na loja.</p>
                 <div
                   style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "15px",
-                    margin: "0",
-                    padding: "20px 10px",
+                    border: '1px solid #ccc',
+                    borderRadius: '15px',
+                    margin: '0',
+                    padding: '20px 10px',
                   }}
                 >
                   {opcaoSelecionadaErro && (
@@ -175,19 +185,18 @@ const Carrinho = () => {
                 <div
                   className="d-flex flex-column my-3"
                   style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "15px",
-                    margin: "0",
-                    padding: "20px 10px",
+                    border: '1px solid #ccc',
+                    borderRadius: '15px',
+                    margin: '0',
+                    padding: '20px 10px',
                   }}
                 >
                   <p className="fw-bold text-center display-6 py-2">
-                    Total do Pedido: R${" "}
+                    Total do Pedido:{" "}
                     {(valorTotalProdutos + frete)
-                      .toFixed(2)
-                      .toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
+                      .toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
                       })}
                   </p>
                   <div className="form-group">
@@ -197,7 +206,7 @@ const Carrinho = () => {
                       onChange={(e) => setMetodoPagamento(e.target.value)}
                     >
                       <option value="DEFAULT">
-                        Escolha um método de pagamento:{" "}
+                        Escolha um método de pagamento:{' '}
                       </option>
                       <option value="DINHEIRO">Dinheiro</option>
                       <option value="CARTAO_CREDITO">Cartão de Crédito</option>
@@ -207,7 +216,7 @@ const Carrinho = () => {
                     {metodoPagamentoErro && (
                       <div className="text-danger">{metodoPagamentoErro}</div>
                     )}
-                    {metodoPagamento === "DINHEIRO" && (
+                    {metodoPagamento === 'DINHEIRO' && (
                       <div className="form-group mt-2">
                         <label>
                           Quantos reais vai usar para pagar em dinheiro?
