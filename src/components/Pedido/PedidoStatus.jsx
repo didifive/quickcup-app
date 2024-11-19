@@ -24,7 +24,11 @@ const PedidoStatus = ({ pedido }) => {
         </span>
     );
   } else if (pedido.status === "CANCELADO") {
-    return <span>Pedido Cancelado</span>;
+    return (
+      <span className={`badge ${statusPedidoMap[pedido.status].color}`}>
+        {statusPedidoMap[pedido.status].label}
+      </span>
+    );
   } else {
     return (
       <>

@@ -102,7 +102,7 @@ const Produto = () => {
                 </button>
                 <input
                   type="number"
-                  className="form-control"
+                  className="form-control text-center"
                   placeholder="0"
                   value={quantidade || ''}
                   onChange={(e) =>
