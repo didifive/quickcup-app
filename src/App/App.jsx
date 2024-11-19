@@ -12,6 +12,7 @@ import { AVISO_FACULDADE } from "../utils/storage-names";
 import Endereco from "../pages/Endereco";
 import ListaPedidos from "../pages/ListaPedidos";
 import Pedido from "../pages/Pedido";
+import Produto from "../pages/Produto";
 
 const App = () => {
   
@@ -53,6 +54,7 @@ const App = () => {
           <Route path="endereco/:id?" element={<Endereco />} />
           <Route path="pedido" element={<ListaPedidos />} />
           <Route path="pedido/:id" element={<Pedido />} />
+          <Route path="produto/:id" element={<Produto />} />
         </Route>
         <Route
           path="fechado"
