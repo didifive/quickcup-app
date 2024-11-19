@@ -25,6 +25,10 @@ const MenuProdutos = ({ produtos }) => {
     }));
   };
 
+  const toPaginaProduto = (id) => {
+    navigate(`/produto/${id}`);
+  };
+
   return (
     <div>
       {produtos.length === 0 && (
@@ -33,50 +37,52 @@ const MenuProdutos = ({ produtos }) => {
       {produtos.map((produto, index) => (
         <div key={index}>
           <div className="col d-flex flex-column mx-auto">
-            <div className="d-flex align-items-center align-items-md-start align-items-xl-center">
+            <div 
+              className="d-flex align-items-center align-items-md-start align-items-xl-center"
+              onClick={() => toPaginaProduto(produto.id)}>
               <div className="bs-icon-xl bs-icon-circle bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center col-3 pe-2">
-                <img
-                  className="rounded w-100"
-                  src={produto.imagem ? produto.imagem : logo}
-                  alt={`foto ${produto.nome}`}
-                />
+                  <img
+                    className="rounded w-100"
+                    src={produto.imagem ? produto.imagem : logo}
+                    alt={`foto ${produto.nome}`}
+                  />
               </div>
               <div className="d-flex flex-column col-9">
-                <div className="d-flex">
-                  <div className="col-8 flex-shrink-1">
-                    <h4>{produto.nome}</h4>
-                    <p className="fw-light text-muted text-truncate">
-                      {produto.descricao}
-                    </p>
-                  </div>
-                  <div className="d-flex flex-column col-4 flex-grow-1 align-items-end">
-                    {produto.valorDesconto && produto.valorDesconto >= 0 ? (
-                      <>
-                        <p className="fw-light text-danger text-decoration-line-through mb-0">
-                          {produto.valorOriginal.toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </p>
-                        <p className="fw-semibold fs-2 my-0">
-                          {(
-                            produto.valorOriginal - produto.valorDesconto
-                          ).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </p>
-                      </>
-                    ) : (
-                      <p className="fw-semibold fs-2">
-                        {produto.valorOriginal.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
+                  <div className="d-flex">
+                    <div className="col-8 flex-shrink-1">
+                      <h4>{produto.nome}</h4>
+                      <p className="fw-light text-muted text-truncate">
+                        {produto.descricao}
                       </p>
-                    )}
+                    </div>
+                    <div className="d-flex flex-column col-4 flex-grow-1 align-items-end">
+                      {produto.valorDesconto && produto.valorDesconto >= 0 ? (
+                        <>
+                          <p className="fw-light text-danger text-decoration-line-through mb-0">
+                            {produto.valorOriginal.toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                          <p className="fw-semibold fs-2 my-0">
+                            {(
+                              produto.valorOriginal - produto.valorDesconto
+                            ).toLocaleString('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL',
+                            })}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="fw-semibold fs-2">
+                          {produto.valorOriginal.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          })}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
                 <div className="input-group">
                   <span className="input-group-text">Quantidade</span>
                   <button
@@ -95,7 +101,7 @@ const MenuProdutos = ({ produtos }) => {
                     type="number"
                     className="form-control"
                     placeholder="0"
-                    value={quantidades[produto.id] || ""}
+                    value={quantidades[produto.id] || ''}
                     onChange={(e) =>
                       handleQuantidadeChange(
                         produto.id,
